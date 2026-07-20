@@ -391,18 +391,13 @@ project/
 
 # Author
 
-**Name:** <YOUR_NAME>
+**Name:** Aryan SHyam Rathod
 
-**Email:** <YOUR_EMAIL>
+**Email:** aryanrathod791@gmail.com
 
-**GitHub:** <YOUR_GITHUB_PROFILE>
+**GitHub:** https://github.com/Aryan054
 
-**LinkedIn:** <YOUR_LINKEDIN_PROFILE>
+**LinkedIn:** https://www.linkedin.com/in/aryan-rathod054/
 
 ---
 
-# License
-
-This project is licensed under the **<LICENSE_NAME>** License.
-
-Add a `LICENSE` file to the repository if you intend to publish it as open source.
