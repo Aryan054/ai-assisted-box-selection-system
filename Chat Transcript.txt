@@ -1,0 +1,5940 @@
+# Django Box Selection Plan
+
+https://chat.openai.com/c/6a5e4d13-8210-83ee-b7ee-462439ad02da
+
+>> USER: Python/Django Hiring Assignment: AI-Assisted Box Selection System
+Context
+We operate an ecommerce platform. When a customer places an order, the warehouse team needs to know which shipping box should be used. Each product has dimensions and weight. Each box has internal dimensions, maximum weight capacity, and cost.
+Your task is to design and build a small Django-based system that recommends the most suitable box for an order.
+You are allowed to use AI tools such as ChatGPT, Claude, Cursor, GitHub Copilot, or similar tools. However, your submission must clearly show your own thinking.
+
+AI Usage
+You may use AI tools, but include an AI_USAGE.md file containing:
+1.	Which AI tool(s) you used.
+2.	The prompts you gave.
+3.	What output you accepted.
+4.	What output you rejected or modified.
+5.	Any mistakes the AI made.
+6.	How you verified the final code.
+Submission
+Please submit:
+1. GitHub repository link.
+2. README.md.
+3. AI_USAGE.md describing tools, prompts, accepted/rejected outputs, mistakes found, and verification steps.
+4. Export the chat transcript and attach and include in your repository. Make sure that you don’t generate this using AI. Your assignment will be rejected immediately if we see that you used AI for this.
+5. What did you learn in this assignment? Again, not to use AI to generate an answer for this.
+6. Test cases.
+7. Test run output, either:
+- GitHub Actions link, 
+- terminal output pasted in TEST_OUTPUT.md. 
+Based on this assignement give me the all imlimentation plan step by step to build all over assignment
+
+>> ASSISTANT: Below is a complete implementation roadmap for building the assignment from start to finish. This plan follows a professional software development workflow and covers everything the interviewer is likely to evaluate.
+
+---
+
+# Phase 1 — Read & Understand Requirements
+
+## Goal
+
+Build a Django REST API that recommends the most suitable shipping box for an order.
+
+The system should
+
+- Store Products
+- Store Boxes
+- Accept Orders
+- Recommend the best box
+- Handle impossible shipments
+- Include automated tests
+- Be production-ready
+
+---
+
+# Phase 2 — Requirement Analysis
+
+## Entities
+
+### Product
+
+Contains
+
+- name
+- length
+- width
+- height
+- weight
+
+---
+
+### Box
+
+Contains
+
+- name
+- internal_length
+- internal_width
+- internal_height
+- max_weight
+- cost
+
+---
+
+### Order
+
+Contains
+
+- products
+- recommended_box
+- status
+- created_at
+
+---
+
+## Relationships
+
+```
+Order
+ |
+ |
+Many Products
+
+Order
+ |
+One Recommended Box
+```
+
+---
+
+# Phase 3 — Understand Business Rules
+
+The algorithm must
+
+✓ Every product fits inside box dimensions
+
+✓ Total weight <= Box max weight
+
+✓ If multiple boxes fit
+
+Choose
+
+Lowest Cost
+
+If cost same
+
+Smallest Volume
+
+If volume same
+
+Alphabetical Name
+
+If no box
+
+Return
+
+"No suitable box found"
+
+---
+
+# Phase 4 — Technology Stack
+
+Backend
+
+- Python
+- Django
+- Django REST Framework
+
+Database
+
+- SQLite
+
+Testing
+
+- pytest
+- Django TestCase
+
+Documentation
+
+- Swagger (optional)
+
+---
+
+# Phase 5 — Create Django Project
+
+```
+box_selector/
+```
+
+Create app
+
+```
+shipping/
+```
+
+Project structure
+
+```
+box_selector/
+
+shipping/
+
+manage.py
+
+requirements.txt
+
+README.md
+
+AI_USAGE.md
+
+TEST_OUTPUT.md
+
+.gitignore
+```
+
+---
+
+# Phase 6 — Install Packages
+
+Install
+
+```
+Django
+
+djangorestframework
+
+pytest
+
+pytest-django
+
+coverage
+
+black
+
+flake8
+```
+
+---
+
+# Phase 7 — Configure Settings
+
+Add
+
+```
+shipping
+
+rest_framework
+```
+
+Configure
+
+```
+SQLite
+
+Timezone
+
+Static files
+```
+
+---
+
+# Phase 8 — Database Design
+
+## Product Model
+
+Fields
+
+```
+id
+
+name
+
+length
+
+width
+
+height
+
+weight
+```
+
+Validation
+
+All dimensions >0
+
+Weight >0
+
+---
+
+## Box Model
+
+Fields
+
+```
+id
+
+name
+
+length
+
+width
+
+height
+
+max_weight
+
+cost
+```
+
+Validation
+
+Positive values
+
+---
+
+## Order Model
+
+Fields
+
+```
+id
+
+created_at
+
+recommended_box
+
+status
+```
+
+---
+
+## OrderItem Model
+
+Many-to-many table
+
+```
+Order
+
+Product
+
+Quantity
+```
+
+---
+
+# Phase 9 — Model Validations
+
+Ensure
+
+No negative dimensions
+
+No zero dimensions
+
+No negative cost
+
+No negative weight
+
+---
+
+# Phase 10 — Create Migrations
+
+```
+makemigrations
+
+migrate
+```
+
+---
+
+# Phase 11 — Register Admin
+
+Register
+
+```
+Product
+
+Box
+
+Order
+
+OrderItem
+```
+
+Customize admin
+
+Filters
+
+Search
+
+Ordering
+
+---
+
+# Phase 12 — Seed Sample Data
+
+Create
+
+10 Products
+
+Example
+
+Laptop
+
+Phone
+
+Monitor
+
+Keyboard
+
+Mouse
+
+Printer
+
+Router
+
+Speaker
+
+Camera
+
+TV
+
+---
+
+Create
+
+10 Boxes
+
+Small
+
+Medium
+
+Large
+
+XL
+
+XXL
+
+Cheap Box
+
+Premium Box
+
+Heavy Box
+
+Economy Box
+
+Warehouse Box
+
+---
+
+# Phase 13 — Serializers
+
+Create serializers
+
+ProductSerializer
+
+BoxSerializer
+
+OrderSerializer
+
+RecommendationSerializer
+
+---
+
+# Phase 14 — API Design
+
+## Product APIs
+
+```
+GET /products/
+
+POST /products/
+
+GET /products/id
+
+PUT
+
+DELETE
+```
+
+---
+
+## Box APIs
+
+```
+GET /boxes/
+
+POST /boxes/
+
+PUT
+
+DELETE
+```
+
+---
+
+## Order APIs
+
+```
+POST /orders/
+
+GET /orders/
+```
+
+---
+
+## Recommendation API
+
+```
+POST
+
+/recommend-box/
+```
+
+Input
+
+```
+{
+products:
+[
+{
+id:1,
+quantity:2
+},
+{
+id:3,
+quantity:1
+}
+]
+}
+```
+
+Output
+
+```
+{
+recommended_box:
+"Medium Box",
+
+cost:120,
+
+volume:8000,
+
+reason:"Lowest Cost"
+}
+```
+
+---
+
+If impossible
+
+```
+{
+message:
+"No suitable box found."
+}
+```
+
+---
+
+# Phase 15 — Recommendation Algorithm
+
+This is the heart of assignment.
+
+---
+
+## Step 1
+
+Fetch products
+
+---
+
+## Step 2
+
+Calculate
+
+Total weight
+
+---
+
+## Step 3
+
+Sort product dimensions
+
+Example
+
+```
+5x10x20
+
+↓
+
+5
+10
+20
+```
+
+Same for box
+
+```
+8x12x25
+
+↓
+
+8
+12
+25
+```
+
+Compare
+
+```
+5<=8
+
+10<=12
+
+20<=25
+```
+
+---
+
+## Step 4
+
+Reject box if
+
+Any product doesn't fit
+
+---
+
+## Step 5
+
+Reject if
+
+Total Weight >
+
+Box Capacity
+
+---
+
+## Step 6
+
+Collect valid boxes
+
+---
+
+## Step 7
+
+Sort valid boxes
+
+Priority
+
+```
+Lowest Cost
+
+↓
+
+Smallest Volume
+
+↓
+
+Alphabetically
+```
+
+---
+
+## Step 8
+
+Return first box
+
+---
+
+# Phase 16 — Service Layer
+
+Do NOT write algorithm inside View.
+
+Create
+
+```
+services/
+
+recommendation.py
+```
+
+Functions
+
+```
+calculate_volume()
+
+product_fits()
+
+calculate_weight()
+
+find_best_box()
+
+recommend_box()
+```
+
+---
+
+# Phase 17 — Error Handling
+
+Invalid product
+
+Negative quantity
+
+Missing product
+
+No box
+
+Empty order
+
+Duplicate products
+
+---
+
+# Phase 18 — Logging
+
+Use logging
+
+```
+INFO
+
+WARNING
+
+ERROR
+```
+
+Log
+
+Recommendation
+
+Rejected boxes
+
+Errors
+
+---
+
+# Phase 19 — Unit Tests
+
+Test
+
+Product creation
+
+Box creation
+
+Order creation
+
+Serializer
+
+Views
+
+Algorithm
+
+---
+
+# Phase 20 — Recommendation Test Cases
+
+Case 1
+
+Single product
+
+Fits Small Box
+
+---
+
+Case 2
+
+Single product
+
+Fits Multiple
+
+Lowest cost selected
+
+---
+
+Case 3
+
+Equal Cost
+
+Smaller volume selected
+
+---
+
+Case 4
+
+Equal Cost
+
+Equal Volume
+
+Alphabetical selected
+
+---
+
+Case 5
+
+Too Heavy
+
+Reject
+
+---
+
+Case 6
+
+Too Large
+
+Reject
+
+---
+
+Case 7
+
+Mixed Products
+
+Correct box
+
+---
+
+Case 8
+
+Empty Order
+
+Validation
+
+---
+
+Case 9
+
+Negative Quantity
+
+Validation
+
+---
+
+Case 10
+
+No Box Exists
+
+Proper response
+
+---
+
+# Phase 21 — Integration Tests
+
+API
+
+Create product
+
+↓
+
+Create box
+
+↓
+
+Create order
+
+↓
+
+Recommend
+
+↓
+
+Verify response
+
+---
+
+# Phase 22 — Code Quality
+
+Run
+
+```
+black
+
+flake8
+
+coverage
+```
+
+Coverage
+
+Target
+
+90%+
+
+---
+
+# Phase 23 — API Documentation
+
+README
+
+Include
+
+Installation
+
+Requirements
+
+Run server
+
+Run tests
+
+API list
+
+Sample Requests
+
+Sample Responses
+
+Project Structure
+
+Algorithm Explanation
+
+Assumptions
+
+Future Improvements
+
+---
+
+# Phase 24 — AI_USAGE.md
+
+Include
+
+AI Tool
+
+Prompt
+
+Accepted output
+
+Rejected output
+
+Mistakes
+
+Verification
+
+(Write this based on your actual development process.)
+
+---
+
+# Phase 25 — TEST_OUTPUT.md
+
+Paste
+
+```
+pytest
+
+coverage
+
+Passed Tests
+
+Time
+
+Coverage %
+```
+
+---
+
+# Phase 26 — GitHub Actions (Optional but Recommended)
+
+Workflow
+
+```
+Install
+
+↓
+
+Migrate
+
+↓
+
+Run Tests
+
+↓
+
+Coverage
+```
+
+---
+
+# Phase 27 — Final Review Checklist
+
+- Project runs with `python manage.py runserver`
+- Migrations apply successfully
+- All models validated
+- REST APIs working
+- Recommendation algorithm implemented in a service layer
+- Business rules followed exactly
+- Automated tests pass
+- README completed
+- AI_USAGE.md completed with your real AI interactions
+- TEST_OUTPUT.md added
+- GitHub repository cleaned up
+- Meaningful commit history
+
+---
+
+# Suggested Project Structure
+
+```text
+box_selector/
+│
+├── box_selector/
+│ ├── settings.py
+│ ├── urls.py
+│ └── ...
+│
+├── shipping/
+│ ├── migrations/
+│ ├── services/
+│ │ ├── __init__.py
+│ │ └── recommendation.py
+│ ├── tests/
+│ │ ├── test_models.py
+│ │ ├── test_services.py
+│ │ ├── test_views.py
+│ │ └── test_serializers.py
+│ ├── admin.py
+│ ├── models.py
+│ ├── serializers.py
+│ ├── views.py
+│ ├── urls.py
+│ ├── validators.py
+│ └── utils.py
+│
+├── requirements.txt
+├── README.md
+├── AI_USAGE.md
+├── TEST_OUTPUT.md
+├── pytest.ini
+├── manage.py
+└── .gitignore
+```
+
+This plan results in a clean, modular, and production-style Django project that demonstrates good software engineering practices beyond simply making the assignment work.
+
+>> USER: Configure
+
+SQLite
+
+Timezone
+
+Static files explain this how to configure all of this
+
+>> ASSISTANT: For this assignment, Django already provides sensible defaults for **SQLite**, **Timezone**, and **Static Files**. You only need to verify or slightly modify `settings.py`.
+
+---
+
+# 1. Configure SQLite
+
+Open:
+
+```text
+box_selector/settings.py
+```
+
+Find the `DATABASES` section.
+
+For SQLite, it should look like this:
+
+```python
+DATABASES = {
+ "default": {
+ "ENGINE": "django.db.backends.sqlite3",
+ "NAME": BASE_DIR / "db.sqlite3",
+ }
+}
+```
+
+### Explanation
+
+- `ENGINE`
+ - Tells Django which database to use.
+ - Here it uses SQLite.
+
+- `NAME`
+ - Specifies the database file.
+ - Django will automatically create `db.sqlite3` in your project folder when you run migrations.
+
+Project structure after migration:
+
+```text
+box_selector/
+│
+├── db.sqlite3
+├── manage.py
+├── box_selector/
+└── shipping/
+```
+
+No additional installation is needed because SQLite is built into Python.
+
+---
+
+# 2. Configure Time Zone
+
+Search for:
+
+```python
+LANGUAGE_CODE
+TIME_ZONE
+USE_I18N
+USE_TZ
+```
+
+Configure them like this:
+
+```python
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "Asia/Kolkata"
+
+USE_I18N = True
+
+USE_TZ = True
+```
+
+### Explanation
+
+### LANGUAGE_CODE
+
+Specifies the default language.
+
+```python
+LANGUAGE_CODE = "en-us"
+```
+
+---
+
+### TIME_ZONE
+
+Since you're in India:
+
+```python
+TIME_ZONE = "Asia/Kolkata"
+```
+
+If you were in the US:
+
+```python
+TIME_ZONE = "America/New_York"
+```
+
+---
+
+### USE_TZ
+
+```python
+USE_TZ = True
+```
+
+This stores timestamps in UTC internally and converts them to your configured timezone when appropriate. It's the recommended setting.
+
+---
+
+# 3. Configure Static Files
+
+Static files include:
+
+- CSS
+- JavaScript
+- Images (that are part of the application, not user uploads)
+
+In `settings.py`, ensure you have:
+
+```python
+STATIC_URL = "static/"
+```
+
+For development, that's enough.
+
+---
+
+## Better configuration
+
+Add:
+
+```python
+STATIC_URL = "static/"
+
+STATICFILES_DIRS = [
+ BASE_DIR / "static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+```
+
+### Explanation
+
+### STATIC_URL
+
+```python
+STATIC_URL = "static/"
+```
+
+This is the URL prefix Django uses to serve static files.
+
+Example:
+
+```text
+http://127.0.0.1:8000/static/style.css
+```
+
+---
+
+### STATICFILES_DIRS
+
+```python
+STATICFILES_DIRS = [
+ BASE_DIR / "static",
+]
+```
+
+This tells Django to look for your project's static files in the `static/` folder.
+
+Project structure:
+
+```text
+box_selector/
+
+static/
+ css/
+ js/
+ images/
+
+manage.py
+```
+
+---
+
+### STATIC_ROOT
+
+```python
+STATIC_ROOT = BASE_DIR / "staticfiles"
+```
+
+When you run:
+
+```bash
+python manage.py collectstatic
+```
+
+Django gathers all static files into the `staticfiles/` directory for deployment.
+
+---
+
+# 4. Create the Static Folder
+
+At your project root, create:
+
+```text
+box_selector/
+
+static/
+ css/
+ js/
+ images/
+
+manage.py
+```
+
+Example:
+
+```text
+static/
+
+css/
+ style.css
+
+js/
+ script.js
+
+images/
+ logo.png
+```
+
+---
+
+# 5. Verify the Configuration
+
+Run:
+
+```bash
+python manage.py runserver
+```
+
+If there are no errors, your configuration is working.
+
+---
+
+# 6. Run Migrations
+
+Since you're using SQLite:
+
+```bash
+python manage.py makemigrations
+
+python manage.py migrate
+```
+
+This creates the `db.sqlite3` file automatically.
+
+---
+
+## Recommended `settings.py` for This Assignment
+
+```python
+# Internationalization
+
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "Asia/Kolkata"
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Database
+
+DATABASES = {
+ "default": {
+ "ENGINE": "django.db.backends.sqlite3",
+ "NAME": BASE_DIR / "db.sqlite3",
+ }
+}
+
+
+# Static files
+
+STATIC_URL = "static/"
+
+STATICFILES_DIRS = [
+ BASE_DIR / "static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+```
+
+For this assignment, **SQLite** and **Timezone** are essential. The enhanced **Static Files** configuration is optional because the project is primarily a REST API, but adding it is a good practice and makes the project more deployment-ready.
+
+>> USER: Database Design for the Product Model, Box Model. Order Model, OrderItem Model aslo do the Model Validations
+
+>> ASSISTANT: For this assignment, you should design the models in a way that is **normalized, scalable, and follows Django best practices**. Below is a recommended design along with model-level validations.
+
+---
+
+# Database Design (ER Diagram)
+
+```text
+ +----------------+
+ | Product |
+ +----------------+
+ | id |
+ | name |
+ | length |
+ | width |
+ | height |
+ | weight |
+ +----------------+
+
+ ▲
+ │
+ │
+ +--------------+
+ | OrderItem |
+ +--------------+
+ | id |
+ | order_id FK |
+ | product_idFK |
+ | quantity |
+ +--------------+
+ ▲
+ │
+ │
+ +----------------+
+ | Order |
+ +----------------+
+ | id |
+ | created_at |
+ | status |
+ | recommended_box|
+ +----------------+
+ │
+ │ FK
+ ▼
+ +----------------+
+ | Box |
+ +----------------+
+ | id |
+ | name |
+ | length |
+ | width |
+ | height |
+ | max_weight |
+ | cost |
+ +----------------+
+```
+
+---
+
+# Product Model
+
+A product stores its dimensions and weight.
+
+## Fields
+
+| Field | Type | Description |
+|--------|------|-------------|
+| id | AutoField | Primary Key |
+| name | CharField | Product Name |
+| length | DecimalField | Length (cm) |
+| width | DecimalField | Width (cm) |
+| height | DecimalField | Height (cm) |
+| weight | DecimalField | Weight (kg) |
+
+---
+
+### Django Model
+
+```python
+from django.db import models
+from django.core.validators import MinValueValidator
+
+class Product(models.Model):
+ name = models.CharField(max_length=100, unique=True)
+
+ length = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ width = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ height = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ weight = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ def __str__(self):
+ return self.name
+```
+
+---
+
+# Box Model
+
+Stores all available shipping boxes.
+
+## Fields
+
+| Field | Type |
+|--------|------|
+| id | AutoField |
+| name | CharField |
+| internal_length | DecimalField |
+| internal_width | DecimalField |
+| internal_height | DecimalField |
+| max_weight | DecimalField |
+| cost | DecimalField |
+
+---
+
+### Django Model
+
+```python
+class Box(models.Model):
+
+ name = models.CharField(max_length=100, unique=True)
+
+ internal_length = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ internal_width = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ internal_height = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ max_weight = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.01)]
+ )
+
+ cost = models.DecimalField(
+ max_digits=8,
+ decimal_places=2,
+ validators=[MinValueValidator(0.00)]
+ )
+
+ def __str__(self):
+ return self.name
+```
+
+---
+
+# Order Model
+
+Stores each customer order.
+
+## Fields
+
+| Field | Type |
+|--------|------|
+| id | AutoField |
+| created_at | DateTimeField |
+| status | CharField |
+| recommended_box | ForeignKey(Box) |
+
+---
+
+### Status Choices
+
+```python
+STATUS_CHOICES = [
+ ("PENDING", "Pending"),
+ ("PACKED", "Packed"),
+ ("SHIPPED", "Shipped"),
+]
+```
+
+---
+
+### Django Model
+
+```python
+class Order(models.Model):
+
+ STATUS_CHOICES = [
+ ("PENDING", "Pending"),
+ ("PACKED", "Packed"),
+ ("SHIPPED", "Shipped"),
+ ]
+
+ status = models.CharField(
+ max_length=20,
+ choices=STATUS_CHOICES,
+ default="PENDING"
+ )
+
+ recommended_box = models.ForeignKey(
+ Box,
+ on_delete=models.SET_NULL,
+ null=True,
+ blank=True,
+ related_name="orders"
+ )
+
+ created_at = models.DateTimeField(auto_now_add=True)
+
+ def __str__(self):
+ return f"Order #{self.id}"
+```
+
+---
+
+# OrderItem Model
+
+Stores products inside an order.
+
+Instead of using a simple ManyToMany field, use an intermediate model because each product has a quantity.
+
+## Fields
+
+| Field | Type |
+|--------|------|
+| order | ForeignKey |
+| product | ForeignKey |
+| quantity | PositiveIntegerField |
+
+---
+
+### Django Model
+
+```python
+class OrderItem(models.Model):
+
+ order = models.ForeignKey(
+ Order,
+ on_delete=models.CASCADE,
+ related_name="items"
+ )
+
+ product = models.ForeignKey(
+ Product,
+ on_delete=models.CASCADE
+ )
+
+ quantity = models.PositiveIntegerField(
+ validators=[MinValueValidator(1)]
+ )
+
+ class Meta:
+ unique_together = ("order", "product")
+
+ def __str__(self):
+ return f"{self.product.name} x {self.quantity}"
+```
+
+`unique_together` ensures the same product cannot appear multiple times in the same order.
+
+---
+
+# Model Validations
+
+Besides field validators, add model-level validation using the `clean()` method.
+
+## Product Validation
+
+```python
+from django.core.exceptions import ValidationError
+
+def clean(self):
+ if self.length <= 0:
+ raise ValidationError("Length must be greater than zero.")
+
+ if self.width <= 0:
+ raise ValidationError("Width must be greater than zero.")
+
+ if self.height <= 0:
+ raise ValidationError("Height must be greater than zero.")
+
+ if self.weight <= 0:
+ raise ValidationError("Weight must be greater than zero.")
+```
+
+---
+
+## Box Validation
+
+```python
+def clean(self):
+
+ if self.internal_length <= 0:
+ raise ValidationError("Length must be greater than zero.")
+
+ if self.internal_width <= 0:
+ raise ValidationError("Width must be greater than zero.")
+
+ if self.internal_height <= 0:
+ raise ValidationError("Height must be greater than zero.")
+
+ if self.max_weight <= 0:
+ raise ValidationError("Maximum weight must be greater than zero.")
+
+ if self.cost < 0:
+ raise ValidationError("Cost cannot be negative.")
+```
+
+---
+
+## OrderItem Validation
+
+```python
+def clean(self):
+
+ if self.quantity <= 0:
+ raise ValidationError("Quantity must be greater than zero.")
+```
+
+---
+
+## Automatically Run Validation on Save
+
+Django does **not** call `clean()` automatically when you call `save()`. To enforce validation consistently, override `save()` in each model:
+
+```python
+def save(self, *args, **kwargs):
+ self.full_clean()
+ super().save(*args, **kwargs)
+```
+
+---
+
+# Final Database Schema Summary
+
+| Model | Purpose |
+|--------|---------|
+| **Product** | Stores product dimensions and weight. |
+| **Box** | Stores shipping box dimensions, weight capacity, and cost. |
+| **Order** | Represents a customer order and stores the recommended box. |
+| **OrderItem** | Links products to orders with quantities. |
+
+This design is normalized, easy to extend, and cleanly supports the recommendation algorithm by separating products, boxes, orders, and line items.
+
+  --- Current branch: USER: Register Admin ---
+
+  >> USER: Register Admin
+  
+  >> ASSISTANT: Registering models in the Django Admin allows you to manage **Products**, **Boxes**, **Orders**, and **Order Items** through the admin interface. Rather than simply registering them, it's better to customize the admin with search, filters, ordering, and useful list displays.
+  
+  ---
+  
+  # Step 1: Open `shipping/admin.py`
+  
+  ```python
+  from django.contrib import admin
+  from .models import Product, Box, Order, OrderItem
+  ```
+  
+  ---
+  
+  # Step 2: Register the Product Model
+  
+  ```python
+  @admin.register(Product)
+  class ProductAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "name",
+   "length",
+   "width",
+   "height",
+   "weight",
+   )
+  
+   search_fields = ("name",)
+  
+   ordering = ("name",)
+  
+   list_per_page = 10
+  ```
+  
+  ### Features
+  
+  - Displays all important product details.
+  - Search by product name.
+  - Sorts products alphabetically.
+  - Shows 10 records per page.
+  
+  ---
+  
+  # Step 3: Register the Box Model
+  
+  ```python
+  @admin.register(Box)
+  class BoxAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "name",
+   "internal_length",
+   "internal_width",
+   "internal_height",
+   "max_weight",
+   "cost",
+   )
+  
+   search_fields = ("name",)
+  
+   ordering = ("cost",)
+  
+   list_per_page = 10
+  ```
+  
+  ### Features
+  
+  - View dimensions, capacity, and cost.
+  - Search by box name.
+  - Boxes ordered by cost.
+  
+  ---
+  
+  # Step 4: Register the Order Model
+  
+  ```python
+  @admin.register(Order)
+  class OrderAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+  
+   list_filter = (
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+  
+   search_fields = ("id",)
+  
+   ordering = ("-created_at",)
+  
+   date_hierarchy = "created_at"
+  
+   list_per_page = 20
+  ```
+  
+  ### Features
+  
+  - Shows order status and recommended box.
+  - Filter by status, box, and date.
+  - Latest orders appear first.
+  - Date navigation at the top.
+  
+  ---
+  
+  # Step 5: Register the OrderItem Model
+  
+  ```python
+  @admin.register(OrderItem)
+  class OrderItemAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "order",
+   "product",
+   "quantity",
+   )
+  
+   search_fields = (
+   "product__name",
+   "order__id",
+   )
+  
+   list_filter = (
+   "product",
+   )
+  
+   ordering = ("order",)
+  
+   list_per_page = 20
+  ```
+  
+  ### Features
+  
+  - Displays product, order, and quantity.
+  - Search by product name or order ID.
+  - Filter by product.
+  
+  ---
+  
+  # Optional (Recommended): Show Order Items Inside an Order
+  
+  Instead of opening `OrderItem` separately, you can display order items directly on the Order page using an inline.
+  
+  ```python
+  class OrderItemInline(admin.TabularInline):
+   model = OrderItem
+   extra = 1
+  ```
+  
+  Update `OrderAdmin`:
+  
+  ```python
+  @admin.register(Order)
+  class OrderAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+  
+   list_filter = (
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+  
+   ordering = ("-created_at",)
+  
+   inlines = [OrderItemInline]
+  ```
+  
+  Now, when viewing an order in the admin, you can add or edit its products directly on the same page.
+  
+  ---
+  
+  # Final `admin.py`
+  
+  ```python
+  from django.contrib import admin
+  from .models import Product, Box, Order, OrderItem
+  
+  
+  @admin.register(Product)
+  class ProductAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "name",
+   "length",
+   "width",
+   "height",
+   "weight",
+   )
+   search_fields = ("name",)
+   ordering = ("name",)
+   list_per_page = 10
+  
+  
+  @admin.register(Box)
+  class BoxAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "name",
+   "internal_length",
+   "internal_width",
+   "internal_height",
+   "max_weight",
+   "cost",
+   )
+   search_fields = ("name",)
+   ordering = ("cost",)
+   list_per_page = 10
+  
+  
+  class OrderItemInline(admin.TabularInline):
+   model = OrderItem
+   extra = 1
+  
+  
+  @admin.register(Order)
+  class OrderAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+   list_filter = (
+   "status",
+   "recommended_box",
+   "created_at",
+   )
+   search_fields = ("id",)
+   ordering = ("-created_at",)
+   date_hierarchy = "created_at"
+   inlines = [OrderItemInline]
+   list_per_page = 20
+  
+  
+  @admin.register(OrderItem)
+  class OrderItemAdmin(admin.ModelAdmin):
+   list_display = (
+   "id",
+   "order",
+   "product",
+   "quantity",
+   )
+   search_fields = (
+   "product__name",
+   "order__id",
+   )
+   list_filter = ("product",)
+   ordering = ("order",)
+   list_per_page = 20
+  ```
+  
+  ### Why this approach?
+  
+  This configuration is more professional than simply using `admin.site.register()`. It makes the Django admin easier to use during development and demonstrates familiarity with common Django admin customization features such as `list_display`, `search_fields`, `list_filter`, `ordering`, `date_hierarchy`, and inline editing. These are all good practices that interviewers often appreciate.
+  
+  >> USER: create serializers for all the models
+  
+  >> ASSISTANT: For this assignment, it's a good practice to create **one serializer per model** and an additional serializer specifically for the **box recommendation API request**. This keeps your code clean and separates database models from API input/output.
+  
+  Create a file:
+  
+  ```text
+  shipping/serializers.py
+  ```
+  
+  ---
+  
+  # 1. ProductSerializer
+  
+  ```python
+  from rest_framework import serializers
+  from .models import Product
+  
+  
+  class ProductSerializer(serializers.ModelSerializer):
+   class Meta:
+   model = Product
+   fields = "__all__"
+  ```
+  
+  ### Purpose
+  
+  - Create a product
+  - Update a product
+  - Retrieve products
+  - List products
+  
+  ---
+  
+  # 2. BoxSerializer
+  
+  ```python
+  from .models import Box
+  
+  
+  class BoxSerializer(serializers.ModelSerializer):
+   class Meta:
+   model = Box
+   fields = "__all__"
+  ```
+  
+  ### Purpose
+  
+  - Create boxes
+  - Update boxes
+  - Retrieve boxes
+  - List boxes
+  
+  ---
+  
+  # 3. OrderItemSerializer
+  
+  Since an order contains multiple products, we'll use a nested serializer.
+  
+  ```python
+  from .models import OrderItem
+  
+  
+  class OrderItemSerializer(serializers.ModelSerializer):
+  
+   product_name = serializers.ReadOnlyField(source="product.name")
+  
+   class Meta:
+   model = OrderItem
+   fields = (
+   "id",
+   "product",
+   "product_name",
+   "quantity",
+   )
+  ```
+  
+  ### Example Response
+  
+  ```json
+  {
+   "id": 1,
+   "product": 5,
+   "product_name": "Laptop",
+   "quantity": 2
+  }
+  ```
+  
+  ---
+  
+  # 4. OrderSerializer
+  
+  An order contains multiple order items.
+  
+  ```python
+  from .models import Order
+  
+  
+  class OrderSerializer(serializers.ModelSerializer):
+  
+   items = OrderItemSerializer(many=True, read_only=True)
+  
+   recommended_box_name = serializers.ReadOnlyField(
+   source="recommended_box.name"
+   )
+  
+   class Meta:
+   model = Order
+   fields = (
+   "id",
+   "status",
+   "recommended_box",
+   "recommended_box_name",
+   "created_at",
+   "items",
+   )
+  
+   read_only_fields = (
+   "recommended_box",
+   "created_at",
+   )
+  ```
+  
+  ---
+  
+  ### Example Output
+  
+  ```json
+  {
+   "id": 1,
+   "status": "PENDING",
+   "recommended_box": 2,
+   "recommended_box_name": "Medium Box",
+   "created_at": "2026-07-20T12:30:15Z",
+   "items": [
+   {
+   "id": 1,
+   "product": 3,
+   "product_name": "Laptop",
+   "quantity": 2
+   }
+   ]
+  }
+  ```
+  
+  ---
+  
+  # 5. Order Creation Serializer
+  
+  Creating an order requires nested input, so it's better to use a dedicated serializer.
+  
+  ```python
+  class OrderItemCreateSerializer(serializers.Serializer):
+   product = serializers.IntegerField()
+   quantity = serializers.IntegerField(min_value=1)
+  ```
+  
+  ---
+  
+  ```python
+  class OrderCreateSerializer(serializers.Serializer):
+  
+   items = OrderItemCreateSerializer(many=True)
+  
+   def validate_items(self, value):
+   if not value:
+   raise serializers.ValidationError(
+   "Order must contain at least one product."
+   )
+   return value
+  ```
+  
+  ### Request Example
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 3,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  This serializer validates the request before creating the order and calling the recommendation service.
+  
+  ---
+  
+  # 6. Recommendation Response Serializer
+  
+  The recommendation API doesn't map directly to a model, so use a plain `Serializer`.
+  
+  ```python
+  class RecommendationSerializer(serializers.Serializer):
+  
+   recommended_box = serializers.CharField()
+  
+   cost = serializers.DecimalField(
+   max_digits=10,
+   decimal_places=2
+   )
+  
+   volume = serializers.DecimalField(
+   max_digits=12,
+   decimal_places=2
+   )
+  
+   reason = serializers.CharField()
+  ```
+  
+  ---
+  
+  ### Example Success Response
+  
+  ```json
+  {
+   "recommended_box": "Medium Box",
+   "cost": 120.00,
+   "volume": 18000.00,
+   "reason": "Lowest cost among all suitable boxes."
+  }
+  ```
+  
+  ---
+  
+  ### Example Failure Response
+  
+  ```json
+  {
+   "message": "No suitable box found."
+  }
+  ```
+  
+  ---
+  
+  # Final `serializers.py`
+  
+  ```text
+  shipping/
+  │
+  ├── serializers.py
+  │
+  ├── ProductSerializer
+  ├── BoxSerializer
+  ├── OrderItemSerializer
+  ├── OrderSerializer
+  ├── OrderItemCreateSerializer
+  ├── OrderCreateSerializer
+  └── RecommendationSerializer
+  ```
+  
+  ## Why use separate serializers?
+  
+  Using dedicated serializers for **reading**, **creating**, and **API responses** follows common Django REST Framework practices. It keeps model serializers simple, allows stricter validation for incoming requests, and makes the recommendation endpoint independent of the database schema. This separation improves maintainability and demonstrates good API design.
+  
+  >> USER: dont created more serializers more than models exact models create the exact serializers
+  
+  >> ASSISTANT: Yes. For this assignment, if you want to keep it simple and have **exactly one serializer for each model**, then you only need **4 serializers**:
+  
+  - ✅ ProductSerializer
+  - ✅ BoxSerializer
+  - ✅ OrderSerializer
+  - ✅ OrderItemSerializer
+  
+  This is sufficient for a CRUD-based assignment and is easier to understand.
+  
+  ## `shipping/serializers.py`
+  
+  ```python
+  from rest_framework import serializers
+  from .models import Product, Box, Order, OrderItem
+  
+  
+  class ProductSerializer(serializers.ModelSerializer):
+   class Meta:
+   model = Product
+   fields = "__all__"
+  
+  
+  class BoxSerializer(serializers.ModelSerializer):
+   class Meta:
+   model = Box
+   fields = "__all__"
+  
+  
+  class OrderItemSerializer(serializers.ModelSerializer):
+   product_name = serializers.ReadOnlyField(source="product.name")
+  
+   class Meta:
+   model = OrderItem
+   fields = [
+   "id",
+   "order",
+   "product",
+   "product_name",
+   "quantity",
+   ]
+  
+  
+  class OrderSerializer(serializers.ModelSerializer):
+   items = OrderItemSerializer(many=True, read_only=True)
+   recommended_box_name = serializers.ReadOnlyField(
+   source="recommended_box.name"
+   )
+  
+   class Meta:
+   model = Order
+   fields = [
+   "id",
+   "status",
+   "recommended_box",
+   "recommended_box_name",
+   "created_at",
+   "items",
+   ]
+  ```
+  
+  ---
+  
+  ## What each serializer does
+  
+  ### `ProductSerializer`
+  - Create Product
+  - Update Product
+  - List Products
+  - Retrieve Product
+  
+  ---
+  
+  ### `BoxSerializer`
+  - Create Box
+  - Update Box
+  - List Boxes
+  - Retrieve Box
+  
+  ---
+  
+  ### `OrderItemSerializer`
+  Returns order item details.
+  
+  Example:
+  
+  ```json
+  {
+   "id": 1,
+   "order": 1,
+   "product": 2,
+   "product_name": "Laptop",
+   "quantity": 3
+  }
+  ```
+  
+  ---
+  
+  ### `OrderSerializer`
+  
+  Returns an order along with:
+  - Order details
+  - Recommended box
+  - Nested order items
+  
+  Example:
+  
+  ```json
+  {
+   "id": 1,
+   "status": "PENDING",
+   "recommended_box": 2,
+   "recommended_box_name": "Medium Box",
+   "created_at": "2026-07-20T15:00:00Z",
+   "items": [
+   {
+   "id": 1,
+   "order": 1,
+   "product": 2,
+   "product_name": "Laptop",
+   "quantity": 2
+   }
+   ]
+  }
+  ```
+  
+  ---
+  
+  ### This is the recommended approach for your assignment because:
+  - ✔ Exactly **one serializer per model** (4 models → 4 serializers).
+  - ✔ No extra request/response serializers.
+  - ✔ Clean and easy to understand.
+  - ✔ Fully compatible with `ModelViewSet` if you use it later.
+  - ✔ Suitable for a hiring assignment where simplicity and readability are valued.
+  
+  >> USER: API Design design apis for Product APIs, Box APIs, Order APIs, Recommendation API
+  
+  >> ASSISTANT: For this assignment, a clean REST API design is important. You have **4 models**, so create CRUD APIs for those models and one additional endpoint for the recommendation logic.
+  
+  # Base URL
+  
+  ```text
+  /api/
+  ```
+  
+  ---
+  
+  # 1. Product APIs
+  
+  Manage products.
+  
+  | Method | Endpoint | Description |
+  |---------|----------|-------------|
+  | GET | `/api/products/` | List all products |
+  | POST | `/api/products/` | Create a product |
+  | GET | `/api/products/<id>/` | Retrieve a product |
+  | PUT | `/api/products/<id>/` | Update a product |
+  | PATCH | `/api/products/<id>/` | Partially update a product |
+  | DELETE | `/api/products/<id>/` | Delete a product |
+  
+  ### Create Product
+  
+  **POST** `/api/products/`
+  
+  Request
+  
+  ```json
+  {
+   "name": "Laptop",
+   "length": 35.00,
+   "width": 25.00,
+   "height": 3.00,
+   "weight": 2.50
+  }
+  ```
+  
+  Response
+  
+  ```json
+  {
+   "id": 1,
+   "name": "Laptop",
+   "length": "35.00",
+   "width": "25.00",
+   "height": "3.00",
+   "weight": "2.50"
+  }
+  ```
+  
+  ---
+  
+  # 2. Box APIs
+  
+  Manage shipping boxes.
+  
+  | Method | Endpoint | Description |
+  |---------|----------|-------------|
+  | GET | `/api/boxes/` | List all boxes |
+  | POST | `/api/boxes/` | Create a box |
+  | GET | `/api/boxes/<id>/` | Retrieve a box |
+  | PUT | `/api/boxes/<id>/` | Update a box |
+  | PATCH | `/api/boxes/<id>/` | Partially update a box |
+  | DELETE | `/api/boxes/<id>/` | Delete a box |
+  
+  ### Create Box
+  
+  **POST** `/api/boxes/`
+  
+  ```json
+  {
+   "name": "Medium Box",
+   "internal_length": 40,
+   "internal_width": 30,
+   "internal_height": 20,
+   "max_weight": 10,
+   "cost": 120
+  }
+  ```
+  
+  ---
+  
+  # 3. Order APIs
+  
+  Manage orders.
+  
+  | Method | Endpoint | Description |
+  |---------|----------|-------------|
+  | GET | `/api/orders/` | List all orders |
+  | POST | `/api/orders/` | Create an order |
+  | GET | `/api/orders/<id>/` | Retrieve an order |
+  | PUT | `/api/orders/<id>/` | Update an order |
+  | PATCH | `/api/orders/<id>/` | Partially update an order |
+  | DELETE | `/api/orders/<id>/` | Delete an order |
+  
+  ### Create Order
+  
+  Since products are stored in the `OrderItem` model, create the order first and then create its associated `OrderItem` records (or implement nested creation if you choose).
+  
+  Example request (if using nested creation):
+  
+  ```json
+  {
+   "status": "PENDING",
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 3,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  ---
+  
+  # 4. OrderItem APIs
+  
+  If you want CRUD access to order items separately, expose these endpoints.
+  
+  | Method | Endpoint | Description |
+  |---------|----------|-------------|
+  | GET | `/api/order-items/` | List all order items |
+  | POST | `/api/order-items/` | Create an order item |
+  | GET | `/api/order-items/<id>/` | Retrieve an order item |
+  | PUT | `/api/order-items/<id>/` | Update an order item |
+  | PATCH | `/api/order-items/<id>/` | Partially update an order item |
+  | DELETE | `/api/order-items/<id>/` | Delete an order item |
+  
+  ---
+  
+  # 5. Recommendation API
+  
+  This is the main business endpoint.
+  
+  | Method | Endpoint | Description |
+  |---------|----------|-------------|
+  | POST | `/api/recommend-box/` | Recommend the best box for an order |
+  
+  ### Request
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 3,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  ### Success Response
+  
+  ```json
+  {
+   "recommended_box": "Medium Box",
+   "cost": 120.00,
+   "reason": "Lowest cost among all suitable boxes."
+  }
+  ```
+  
+  ### Failure Response
+  
+  ```json
+  {
+   "message": "No suitable box found."
+  }
+  ```
+  
+  ---
+  
+  # HTTP Status Codes
+  
+  | Status Code | Meaning |
+  |-------------|---------|
+  | 200 OK | Request completed successfully |
+  | 201 Created | Resource created |
+  | 204 No Content | Resource deleted |
+  | 400 Bad Request | Validation error |
+  | 404 Not Found | Resource not found |
+  | 500 Internal Server Error | Unexpected server error |
+  
+  ---
+  
+  # URL Configuration
+  
+  ```python
+  from django.urls import path, include
+  from rest_framework.routers import DefaultRouter
+  from .views import (
+   ProductViewSet,
+   BoxViewSet,
+   OrderViewSet,
+   OrderItemViewSet,
+   RecommendBoxAPIView,
+  )
+  
+  router = DefaultRouter()
+  router.register(r'products', ProductViewSet)
+  router.register(r'boxes', BoxViewSet)
+  router.register(r'orders', OrderViewSet)
+  router.register(r'order-items', OrderItemViewSet)
+  
+  urlpatterns = [
+   path("", include(router.urls)),
+   path("recommend-box/", RecommendBoxAPIView.as_view(), name="recommend-box"),
+  ]
+  ```
+  
+  ---
+  
+  ## Final API Summary
+  
+  | Method | Endpoint | Purpose |
+  |---------|----------|---------|
+  | GET | `/api/products/` | List products |
+  | POST | `/api/products/` | Create product |
+  | GET | `/api/products/<id>/` | Retrieve product |
+  | PUT/PATCH | `/api/products/<id>/` | Update product |
+  | DELETE | `/api/products/<id>/` | Delete product |
+  | GET | `/api/boxes/` | List boxes |
+  | POST | `/api/boxes/` | Create box |
+  | GET | `/api/boxes/<id>/` | Retrieve box |
+  | PUT/PATCH | `/api/boxes/<id>/` | Update box |
+  | DELETE | `/api/boxes/<id>/` | Delete box |
+  | GET | `/api/orders/` | List orders |
+  | POST | `/api/orders/` | Create order |
+  | GET | `/api/orders/<id>/` | Retrieve order |
+  | PUT/PATCH | `/api/orders/<id>/` | Update order |
+  | DELETE | `/api/orders/<id>/` | Delete order |
+  | GET | `/api/order-items/` | List order items |
+  | POST | `/api/order-items/` | Create order item |
+  | GET | `/api/order-items/<id>/` | Retrieve order item |
+  | PUT/PATCH | `/api/order-items/<id>/` | Update order item |
+  | DELETE | `/api/order-items/<id>/` | Delete order item |
+  | POST | `/api/recommend-box/` | Recommend the best shipping box |
+  
+  This design follows standard REST conventions and cleanly separates CRUD operations for your models from the custom recommendation endpoint that contains the assignment's core business logic.
+  
+  >> USER: create generic urls for all the apis
+  
+  >> ASSISTANT: Since you're using **Django REST Framework**, the cleanest approach is to use **Generic Views** (`ListCreateAPIView`, `RetrieveUpdateDestroyAPIView`) instead of `ViewSets`. Your URLs can still be generic and RESTful.
+  
+  ## `shipping/urls.py`
+  
+  ```python
+  from django.urls import path
+  from .views import (
+   ProductListCreateView,
+   ProductRetrieveUpdateDestroyView,
+   BoxListCreateView,
+   BoxRetrieveUpdateDestroyView,
+   OrderListCreateView,
+   OrderRetrieveUpdateDestroyView,
+   OrderItemListCreateView,
+   OrderItemRetrieveUpdateDestroyView,
+   RecommendBoxAPIView,
+  )
+  
+  urlpatterns = [
+   # Product APIs
+   path(
+   "products/",
+   ProductListCreateView.as_view(),
+   name="product-list-create",
+   ),
+   path(
+   "products/<int:pk>/",
+   ProductRetrieveUpdateDestroyView.as_view(),
+   name="product-detail",
+   ),
+  
+   # Box APIs
+   path(
+   "boxes/",
+   BoxListCreateView.as_view(),
+   name="box-list-create",
+   ),
+   path(
+   "boxes/<int:pk>/",
+   BoxRetrieveUpdateDestroyView.as_view(),
+   name="box-detail",
+   ),
+  
+   # Order APIs
+   path(
+   "orders/",
+   OrderListCreateView.as_view(),
+   name="order-list-create",
+   ),
+   path(
+   "orders/<int:pk>/",
+   OrderRetrieveUpdateDestroyView.as_view(),
+   name="order-detail",
+   ),
+  
+   # Order Item APIs
+   path(
+   "order-items/",
+   OrderItemListCreateView.as_view(),
+   name="order-item-list-create",
+   ),
+   path(
+   "order-items/<int:pk>/",
+   OrderItemRetrieveUpdateDestroyView.as_view(),
+   name="order-item-detail",
+   ),
+  
+   # Recommendation API
+   path(
+   "recommend-box/",
+   RecommendBoxAPIView.as_view(),
+   name="recommend-box",
+   ),
+  ]
+  ```
+  
+  ---
+  
+  ## Project `urls.py`
+  
+  Include your app's URLs in the main project.
+  
+  ```python
+  from django.contrib import admin
+  from django.urls import path, include
+  
+  urlpatterns = [
+   path("admin/", admin.site.urls),
+   path("api/", include("shipping.urls")),
+  ]
+  ```
+  
+  ---
+  
+  ## Final API Endpoints
+  
+  | Method | Endpoint |
+  |---------|----------|
+  | GET, POST | `/api/products/` |
+  | GET, PUT, PATCH, DELETE | `/api/products/<int:pk>/` |
+  | GET, POST | `/api/boxes/` |
+  | GET, PUT, PATCH, DELETE | `/api/boxes/<int:pk>/` |
+  | GET, POST | `/api/orders/` |
+  | GET, PUT, PATCH, DELETE | `/api/orders/<int:pk>/` |
+  | GET, POST | `/api/order-items/` |
+  | GET, PUT, PATCH, DELETE | `/api/order-items/<int:pk>/` |
+  | POST | `/api/recommend-box/` |
+  
+  This URL structure is RESTful, easy to maintain, and works directly with Django REST Framework's generic class-based views.
+  
+  >> USER: now give me the class based apis for the urls
+  
+  >> ASSISTANT: For this assignment, **Generic Class-Based Views (CBVs)** are the best choice because they reduce boilerplate while keeping the code readable.
+  
+  Create a `views.py` file like this.
+  
+  ```python
+  from rest_framework import generics
+  from .models import Product, Box, Order, OrderItem
+  from .serializers import (
+   ProductSerializer,
+   BoxSerializer,
+   OrderSerializer,
+   OrderItemSerializer,
+  )
+  ```
+  
+  ---
+  
+  # 1. Product APIs
+  
+  ```python
+  class ProductListCreateView(generics.ListCreateAPIView):
+   queryset = Product.objects.all()
+   serializer_class = ProductSerializer
+  
+  
+  class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Product.objects.all()
+   serializer_class = ProductSerializer
+  ```
+  
+  ---
+  
+  # 2. Box APIs
+  
+  ```python
+  class BoxListCreateView(generics.ListCreateAPIView):
+   queryset = Box.objects.all()
+   serializer_class = BoxSerializer
+  
+  
+  class BoxRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Box.objects.all()
+   serializer_class = BoxSerializer
+  ```
+  
+  ---
+  
+  # 3. Order APIs
+  
+  ```python
+  class OrderListCreateView(generics.ListCreateAPIView):
+   queryset = Order.objects.all().order_by("-created_at")
+   serializer_class = OrderSerializer
+  
+  
+  class OrderRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Order.objects.all()
+   serializer_class = OrderSerializer
+  ```
+  
+  ---
+  
+  # 4. Order Item APIs
+  
+  ```python
+  class OrderItemListCreateView(generics.ListCreateAPIView):
+   queryset = OrderItem.objects.all()
+   serializer_class = OrderItemSerializer
+  
+  
+  class OrderItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = OrderItem.objects.all()
+   serializer_class = OrderItemSerializer
+  ```
+  
+  ---
+  
+  # 5. Recommendation API
+  
+  This is the only custom API because it contains the assignment's business logic.
+  
+  ```python
+  from rest_framework.views import APIView
+  from rest_framework.response import Response
+  from rest_framework import status
+  
+  
+  class RecommendBoxAPIView(APIView):
+  
+   def post(self, request):
+   """
+   Placeholder for recommendation logic.
+   Business logic will be implemented in the service layer.
+   """
+  
+   return Response(
+   {
+   "message": "Recommendation API is under implementation."
+   },
+   status=status.HTTP_200_OK,
+   )
+  ```
+  
+  ---
+  
+  # Complete `views.py`
+  
+  ```python
+  from rest_framework import generics, status
+  from rest_framework.views import APIView
+  from rest_framework.response import Response
+  
+  from .models import Product, Box, Order, OrderItem
+  from .serializers import (
+   ProductSerializer,
+   BoxSerializer,
+   OrderSerializer,
+   OrderItemSerializer,
+  )
+  
+  
+  class ProductListCreateView(generics.ListCreateAPIView):
+   queryset = Product.objects.all()
+   serializer_class = ProductSerializer
+  
+  
+  class ProductRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Product.objects.all()
+   serializer_class = ProductSerializer
+  
+  
+  class BoxListCreateView(generics.ListCreateAPIView):
+   queryset = Box.objects.all()
+   serializer_class = BoxSerializer
+  
+  
+  class BoxRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Box.objects.all()
+   serializer_class = BoxSerializer
+  
+  
+  class OrderListCreateView(generics.ListCreateAPIView):
+   queryset = Order.objects.all().order_by("-created_at")
+   serializer_class = OrderSerializer
+  
+  
+  class OrderRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = Order.objects.all()
+   serializer_class = OrderSerializer
+  
+  
+  class OrderItemListCreateView(generics.ListCreateAPIView):
+   queryset = OrderItem.objects.all()
+   serializer_class = OrderItemSerializer
+  
+  
+  class OrderItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+   queryset = OrderItem.objects.all()
+   serializer_class = OrderItemSerializer
+  
+  
+  class RecommendBoxAPIView(APIView):
+  
+   def post(self, request):
+   """
+   Recommendation logic will be added later.
+   """
+  
+   return Response(
+   {
+   "message": "Recommendation API is under implementation."
+   },
+   status=status.HTTP_200_OK,
+   )
+  ```
+  
+  ### Next Step
+  
+  The next step is to implement the **recommendation algorithm** in a separate service layer (for example, `shipping/services/recommendation.py`) and call it from `RecommendBoxAPIView`. Keeping the algorithm out of the view is a good practice and aligns with what many interviewers expect for this type of assignment.
+  
+  >> USER: give me the RecommendBoxAPIView logic as per the assignment
+  
+  >> ASSISTANT: For this assignment, the **recommendation logic should not be written directly inside the APIView**. A professional Django project keeps the business logic in a service (e.g., `services/recommendation.py`) and the view simply validates the request, calls the service, and returns the response.
+  
+  ---
+  
+  ## `views.py`
+  
+  ```python
+  from rest_framework.views import APIView
+  from rest_framework.response import Response
+  from rest_framework import status
+  
+  from .services.recommendation import recommend_box
+  
+  
+  class RecommendBoxAPIView(APIView):
+   """
+   POST /api/recommend-box/
+  
+   Request:
+   {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 3,
+   "quantity": 1
+   }
+   ]
+   }
+   """
+  
+   def post(self, request):
+  
+   items = request.data.get("items")
+  
+   if not items:
+   return Response(
+   {
+   "success": False,
+   "message": "Order must contain at least one product."
+   },
+   status=status.HTTP_400_BAD_REQUEST,
+   )
+  
+   result = recommend_box(items)
+  
+   if not result["success"]:
+   return Response(
+   result,
+   status=status.HTTP_400_BAD_REQUEST,
+   )
+  
+   return Response(
+   result,
+   status=status.HTTP_200_OK,
+   )
+  ```
+  
+  ---
+  
+  # `shipping/services/recommendation.py`
+  
+  ```python
+  from decimal import Decimal
+  
+  from ..models import Product, Box
+  
+  
+  def recommend_box(items):
+   """
+   Returns the best box according to the assignment rules.
+  
+   Rules
+  
+   1. Every product must fit inside the box.
+   2. Total weight <= box capacity.
+   3. Lowest cost wins.
+   4. If cost is same -> Smaller volume wins.
+   5. If still same -> Alphabetical name.
+   """
+  
+   total_weight = Decimal("0")
+  
+   products = []
+  
+   # ------------------------------------
+   # Fetch Products
+   # ------------------------------------
+  
+   for item in items:
+  
+   product_id = item.get("product")
+   quantity = item.get("quantity", 1)
+  
+   if quantity <= 0:
+   return {
+   "success": False,
+   "message": "Quantity must be greater than zero."
+   }
+  
+   try:
+   product = Product.objects.get(pk=product_id)
+  
+   except Product.DoesNotExist:
+  
+   return {
+   "success": False,
+   "message": f"Product {product_id} does not exist."
+   }
+  
+   total_weight += product.weight * quantity
+  
+   products.append(
+   {
+   "product": product,
+   "quantity": quantity
+   }
+   )
+  
+   # ------------------------------------
+   # Find Suitable Boxes
+   # ------------------------------------
+  
+   suitable_boxes = []
+  
+   for box in Box.objects.all():
+  
+   # Weight check
+  
+   if total_weight > box.max_weight:
+   continue
+  
+   fits = True
+  
+   # Check every product
+  
+   for item in products:
+  
+   product = item["product"]
+  
+   # Sort dimensions to allow rotation
+   product_dimensions = sorted([
+   product.length,
+   product.width,
+   product.height,
+   ])
+  
+   box_dimensions = sorted([
+   box.internal_length,
+   box.internal_width,
+   box.internal_height,
+   ])
+  
+   if (
+   product_dimensions[0] > box_dimensions[0]
+   or product_dimensions[1] > box_dimensions[1]
+   or product_dimensions[2] > box_dimensions[2]
+   ):
+   fits = False
+   break
+  
+   if fits:
+  
+   volume = (
+   box.internal_length
+   * box.internal_width
+   * box.internal_height
+   )
+  
+   suitable_boxes.append(
+   {
+   "box": box,
+   "volume": volume,
+   }
+   )
+  
+   # ------------------------------------
+   # No Box Found
+   # ------------------------------------
+  
+   if not suitable_boxes:
+  
+   return {
+   "success": False,
+   "message": "No suitable box found."
+   }
+  
+   # ------------------------------------
+   # Sort According to Assignment Rules
+   # ------------------------------------
+  
+   suitable_boxes.sort(
+   key=lambda item: (
+   item["box"].cost,
+   item["volume"],
+   item["box"].name.lower(),
+   )
+   )
+  
+   best = suitable_boxes[0]
+  
+   return {
+   "success": True,
+   "recommended_box": best["box"].name,
+   "box_id": best["box"].id,
+   "cost": best["box"].cost,
+   "volume": best["volume"],
+   "max_weight": best["box"].max_weight,
+   "total_weight": total_weight,
+   "message": "Box recommended successfully."
+   }
+  ```
+  
+  ---
+  
+  ## Example Request
+  
+  ```json
+  POST /api/recommend-box/
+  
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 3,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  ---
+  
+  ## Example Success Response
+  
+  ```json
+  {
+   "success": true,
+   "recommended_box": "Medium Box",
+   "box_id": 2,
+   "cost": "120.00",
+   "volume": "24000.00",
+   "max_weight": "15.00",
+   "total_weight": "8.50",
+   "message": "Box recommended successfully."
+  }
+  ```
+  
+  ---
+  
+  ## Example Failure Response
+  
+  ```json
+  {
+   "success": false,
+   "message": "No suitable box found."
+  }
+  ```
+  
+  ### Why this implementation?
+  
+  This solution satisfies the assignment's stated rules:
+  
+  - ✔ Validates that each referenced product exists.
+  - ✔ Ensures quantities are positive.
+  - ✔ Calculates the total order weight.
+  - ✔ Allows products to be rotated by sorting dimensions before comparison.
+  - ✔ Rejects boxes that exceed their maximum weight.
+  - ✔ Rejects boxes where any product cannot fit.
+  - ✔ Chooses the best box by:
+   1. Lowest cost
+   2. Smallest volume (if costs are equal)
+   3. Alphabetically by name (if both cost and volume are equal)
+  - ✔ Keeps the business logic in a dedicated service layer, leaving the API view focused on request handling. This separation is a common Django best practice and is appropriate for a hiring assignment.
+  
+  >> USER: give me the more beter way the veies and service logic
+  
+  >> ASSISTANT: Yes. For a hiring assignment, I'd make it **more object-oriented, modular, and testable**. Instead of a single function, create a **`BoxRecommendationService`** class. This is closer to production code and is what many interviewers expect.
+  
+  ## Project Structure
+  
+  ```text
+  shipping/
+  │
+  ├── services/
+  │ ├── __init__.py
+  │ └── recommendation.py
+  │
+  ├── views.py
+  ```
+  
+  ---
+  
+  # services/recommendation.py
+  
+  ```python
+  from decimal import Decimal
+  
+  from django.db.models import F
+  
+  from shipping.models import Product, Box
+  
+  
+  class BoxRecommendationService:
+  
+   def __init__(self, items):
+   self.items = items
+   self.products = []
+   self.total_weight = Decimal("0.00")
+  
+   def recommend(self):
+   """
+   Main entry point.
+   """
+  
+   self._load_products()
+  
+   suitable_boxes = self._find_suitable_boxes()
+  
+   if not suitable_boxes:
+   return {
+   "success": False,
+   "message": "No suitable box found."
+   }
+  
+   best_box = self._select_best_box(suitable_boxes)
+  
+   return self._build_response(best_box)
+  
+   # ---------------------------------------------------
+  
+   def _load_products(self):
+  
+   for item in self.items:
+  
+   product = Product.objects.get(pk=item["product"])
+  
+   quantity = item["quantity"]
+  
+   self.products.append(
+   {
+   "product": product,
+   "quantity": quantity,
+   }
+   )
+  
+   self.total_weight += product.weight * quantity
+  
+   # ---------------------------------------------------
+  
+   def _find_suitable_boxes(self):
+  
+   suitable_boxes = []
+  
+   boxes = Box.objects.all()
+  
+   for box in boxes:
+  
+   if self.total_weight > box.max_weight:
+   continue
+  
+   if self._products_fit(box):
+  
+   suitable_boxes.append(box)
+  
+   return suitable_boxes
+  
+   # ---------------------------------------------------
+  
+   def _products_fit(self, box):
+  
+   box_dimensions = sorted([
+   box.internal_length,
+   box.internal_width,
+   box.internal_height,
+   ])
+  
+   for item in self.products:
+  
+   product = item["product"]
+  
+   product_dimensions = sorted([
+   product.length,
+   product.width,
+   product.height,
+   ])
+  
+   if (
+   product_dimensions[0] > box_dimensions[0]
+   or product_dimensions[1] > box_dimensions[1]
+   or product_dimensions[2] > box_dimensions[2]
+   ):
+   return False
+  
+   return True
+  
+   # ---------------------------------------------------
+  
+   def _select_best_box(self, boxes):
+  
+   return sorted(
+   boxes,
+   key=lambda box: (
+   box.cost,
+   box.internal_length
+   * box.internal_width
+   * box.internal_height,
+   box.name.lower(),
+   ),
+   )[0]
+  
+   # ---------------------------------------------------
+  
+   def _build_response(self, box):
+  
+   volume = (
+   box.internal_length
+   * box.internal_width
+   * box.internal_height
+   )
+  
+   return {
+   "success": True,
+   "recommended_box": {
+   "id": box.id,
+   "name": box.name,
+   "cost": box.cost,
+   "volume": volume,
+   "max_weight": box.max_weight,
+   },
+   "total_weight": self.total_weight,
+   "message": "Box recommended successfully."
+   }
+  ```
+  
+  ---
+  
+  # views.py
+  
+  ```python
+  from rest_framework.views import APIView
+  from rest_framework.response import Response
+  from rest_framework import status
+  
+  from shipping.services.recommendation import BoxRecommendationService
+  
+  
+  class RecommendBoxAPIView(APIView):
+  
+   def post(self, request):
+  
+   items = request.data.get("items")
+  
+   if not items:
+   return Response(
+   {
+   "success": False,
+   "message": "Items field is required."
+   },
+   status=status.HTTP_400_BAD_REQUEST,
+   )
+  
+   try:
+  
+   service = BoxRecommendationService(items)
+  
+   result = service.recommend()
+  
+   if result["success"]:
+  
+   return Response(
+   result,
+   status=status.HTTP_200_OK,
+   )
+  
+   return Response(
+   result,
+   status=status.HTTP_400_BAD_REQUEST,
+   )
+  
+   except Exception as e:
+  
+   return Response(
+   {
+   "success": False,
+   "message": str(e)
+   },
+   status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+   )
+  ```
+  
+  ---
+  
+  # Why this is better than the previous version
+  
+  ### 1. Single Responsibility Principle
+  
+  Instead of one long function, each method has a single responsibility:
+  
+  - `_load_products()` → Load products and calculate weight.
+  - `_products_fit()` → Check whether all products fit inside a box.
+  - `_find_suitable_boxes()` → Filter valid boxes.
+  - `_select_best_box()` → Apply the assignment's sorting rules.
+  - `_build_response()` → Format the API response.
+  
+  ---
+  
+  ### 2. Easy to Test
+  
+  You can write focused unit tests for each method, for example:
+  
+  ```python
+  service._products_fit(box)
+  service._select_best_box(boxes)
+  service._load_products()
+  ```
+  
+  rather than testing one large function.
+  
+  ---
+  
+  ### 3. Thin View
+  
+  The API view is responsible only for:
+  
+  - Reading the request.
+  - Validating required input.
+  - Calling the service.
+  - Returning the HTTP response.
+  
+  All business logic stays in the service layer.
+  
+  ---
+  
+  ### 4. Reusable Service
+  
+  The same `BoxRecommendationService` can be reused from:
+  
+  - A REST API
+  - Django Admin actions
+  - Management commands
+  - Celery tasks
+  - Future GraphQL endpoints
+  
+  without duplicating logic.
+  
+  ---
+  
+  ## One improvement I'd recommend
+  
+  Your current algorithm checks **each product independently** against the box dimensions and verifies the **total weight**, but it does **not** check whether the combined products can actually be packed together in the box. The assignment wording can be interpreted either way, but in real-world packing this matters.
+  
+  If you want to make your solution stand out, you can add a simple packing heuristic, such as:
+  
+  - Sum the volumes of all products and ensure the total volume does not exceed the box volume.
+  - Keep the existing per-product dimension checks.
+  - Continue applying the selection rules (lowest cost → smallest volume → alphabetical name).
+  
+  This isn't a full 3D bin-packing algorithm, but it's a stronger approximation and demonstrates additional thought beyond the minimum requirements while remaining practical for an interview assignment.
+  
+  >> USER: give me the Unit Tests for all the apis how to test also step by step guild
+  
+  >> ASSISTANT: For this assignment, you should have **three levels of testing**:
+  
+  1. **Model Tests** (validate models)
+  2. **API Tests** (test all endpoints)
+  3. **Recommendation Service Tests** (test the algorithm)
+  
+  This gives you good coverage and demonstrates good engineering practice.
+  
+  ---
+  
+  # Recommended Test Structure
+  
+  ```text
+  shipping/
+  │
+  ├── tests/
+  │ ├── __init__.py
+  │ ├── test_models.py
+  │ ├── test_product_api.py
+  │ ├── test_box_api.py
+  │ ├── test_order_api.py
+  │ ├── test_order_item_api.py
+  │ ├── test_recommendation_api.py
+  │ └── test_recommendation_service.py
+  ```
+  
+  ---
+  
+  # Step 1 Install Testing Packages
+  
+  ```bash
+  pip install pytest pytest-django
+  ```
+  
+  or use Django's built-in test framework (no extra installation required).
+  
+  ---
+  
+  # Step 2 Create `pytest.ini`
+  
+  ```ini
+  [pytest]
+  DJANGO_SETTINGS_MODULE = box_selector.settings
+  python_files = tests.py test_*.py *_tests.py
+  ```
+  
+  ---
+  
+  # Step 3 Create Base Test Data
+  
+  Almost every test needs products and boxes.
+  
+  ```python
+  from django.test import TestCase
+  from rest_framework.test import APIClient
+  
+  from shipping.models import Product, Box
+  
+  
+  class BaseAPITest(TestCase):
+  
+   def setUp(self):
+  
+   self.client = APIClient()
+  
+   self.product = Product.objects.create(
+   name="Laptop",
+   length=30,
+   width=20,
+   height=5,
+   weight=3
+   )
+  
+   self.box = Box.objects.create(
+   name="Medium Box",
+   internal_length=40,
+   internal_width=30,
+   internal_height=20,
+   max_weight=10,
+   cost=100
+   )
+  ```
+  
+  ---
+  
+  # Product API Tests
+  
+  ## Create Product
+  
+  ```python
+  from rest_framework import status
+  from django.urls import reverse
+  
+  
+  class ProductAPITest(BaseAPITest):
+  
+   def test_create_product(self):
+  
+   payload = {
+   "name": "Mouse",
+   "length": 10,
+   "width": 5,
+   "height": 3,
+   "weight": 1,
+   }
+  
+   response = self.client.post(
+   reverse("product-list-create"),
+   payload,
+   format="json",
+   )
+  
+   self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+  ```
+  
+  ---
+  
+  ## Get Products
+  
+  ```python
+  def test_get_products(self):
+  
+   response = self.client.get(
+   reverse("product-list-create")
+   )
+  
+   self.assertEqual(response.status_code, 200)
+   self.assertEqual(len(response.data), 1)
+  ```
+  
+  ---
+  
+  ## Retrieve Product
+  
+  ```python
+  def test_retrieve_product(self):
+  
+   response = self.client.get(
+   reverse(
+   "product-detail",
+   kwargs={"pk": self.product.id}
+   )
+   )
+  
+   self.assertEqual(response.status_code, 200)
+  ```
+  
+  ---
+  
+  ## Update Product
+  
+  ```python
+  def test_update_product(self):
+  
+   payload = {
+   "name": "Gaming Laptop",
+   "length": 35,
+   "width": 25,
+   "height": 5,
+   "weight": 4,
+   }
+  
+   response = self.client.put(
+   reverse(
+   "product-detail",
+   kwargs={"pk": self.product.id}
+   ),
+   payload,
+   format="json",
+   )
+  
+   self.assertEqual(response.status_code, 200)
+  ```
+  
+  ---
+  
+  ## Delete Product
+  
+  ```python
+  def test_delete_product(self):
+  
+   response = self.client.delete(
+   reverse(
+   "product-detail",
+   kwargs={"pk": self.product.id}
+   )
+   )
+  
+   self.assertEqual(response.status_code, 204)
+  ```
+  
+  ---
+  
+  # Box API Tests
+  
+  Exactly the same five tests
+  
+  ```
+  ✓ Create
+  
+  ✓ List
+  
+  ✓ Retrieve
+  
+  ✓ Update
+  
+  ✓ Delete
+  ```
+  
+  ---
+  
+  # Order API Tests
+  
+  ```
+  Create Order
+  
+  List Orders
+  
+  Retrieve Order
+  
+  Update Order
+  
+  Delete Order
+  ```
+  
+  ---
+  
+  # Order Item API Tests
+  
+  ```
+  Create Order Item
+  
+  List Order Items
+  
+  Retrieve Order Item
+  
+  Update Order Item
+  
+  Delete Order Item
+  ```
+  
+  ---
+  
+  # Recommendation API Tests
+  
+  This is the most important part.
+  
+  ---
+  
+  ## Test 1
+  
+  Suitable Box
+  
+  ```python
+  def test_recommend_box_success(self):
+  
+   payload = {
+   "items": [
+   {
+   "product": self.product.id,
+   "quantity": 1
+   }
+   ]
+   }
+  
+   response = self.client.post(
+   reverse("recommend-box"),
+   payload,
+   format="json",
+   )
+  
+   self.assertEqual(response.status_code, 200)
+  
+   self.assertTrue(response.data["success"])
+  
+   self.assertEqual(
+   response.data["recommended_box"]["name"],
+   "Medium Box"
+   )
+  ```
+  
+  ---
+  
+  ## Test 2
+  
+  Invalid Product
+  
+  ```python
+  def test_invalid_product(self):
+  
+   payload = {
+   "items": [
+   {
+   "product": 999,
+   "quantity": 1
+   }
+   ]
+   }
+  
+   response = self.client.post(
+   reverse("recommend-box"),
+   payload,
+   format="json",
+   )
+  
+   self.assertEqual(response.status_code, 400)
+  ```
+  
+  ---
+  
+  ## Test 3
+  
+  No Items
+  
+  ```python
+  def test_empty_order(self):
+  
+   payload = {
+   "items": []
+   }
+  
+   response = self.client.post(
+   reverse("recommend-box"),
+   payload,
+   format="json",
+   )
+  
+   self.assertEqual(response.status_code, 400)
+  ```
+  
+  ---
+  
+  ## Test 4
+  
+  Heavy Product
+  
+  Create
+  
+  ```
+  Weight = 50kg
+  
+  Box Capacity = 10kg
+  ```
+  
+  Expect
+  
+  ```
+  No suitable box
+  ```
+  
+  ---
+  
+  ## Test 5
+  
+  Oversized Product
+  
+  ```
+  Product
+  
+  100 x100 x100
+  
+  Box
+  
+  40 x30 x20
+  ```
+  
+  Expect
+  
+  ```
+  No suitable box
+  ```
+  
+  ---
+  
+  ## Test 6
+  
+  Lowest Cost Rule
+  
+  Create
+  
+  ```
+  Small Box
+  
+  100
+  
+  Medium Box
+  
+  150
+  
+  Large Box
+  
+  300
+  ```
+  
+  Expect
+  
+  ```
+  Small Box
+  ```
+  
+  ---
+  
+  ## Test 7
+  
+  Same Cost
+  
+  ```
+  Box A
+  
+  100
+  
+  Volume 30000
+  
+  Box B
+  
+  100
+  
+  Volume 25000
+  ```
+  
+  Expect
+  
+  ```
+  Box B
+  ```
+  
+  ---
+  
+  ## Test 8
+  
+  Same Cost
+  
+  Same Volume
+  
+  ```
+  AAA Box
+  
+  ZZZ Box
+  ```
+  
+  Expect
+  
+  ```
+  AAA Box
+  ```
+  
+  ---
+  
+  # Recommendation Service Tests
+  
+  Test the service directly without making HTTP requests.
+  
+  ```
+  ✓ Product exists
+  
+  ✓ Product not found
+  
+  ✓ Quantity validation
+  
+  ✓ Weight calculation
+  
+  ✓ Dimension checking
+  
+  ✓ Suitable box detection
+  
+  ✓ Lowest cost
+  
+  ✓ Smallest volume
+  
+  ✓ Alphabetical order
+  
+  ✓ Response format
+  ```
+  
+  ---
+  
+  # Model Tests
+  
+  ### Product
+  
+  ```
+  Create Product
+  
+  Negative Weight
+  
+  Negative Length
+  
+  Zero Height
+  
+  Unique Name
+  ```
+  
+  ---
+  
+  ### Box
+  
+  ```
+  Create Box
+  
+  Negative Cost
+  
+  Negative Weight
+  
+  Negative Dimensions
+  ```
+  
+  ---
+  
+  ### Order Item
+  
+  ```
+  Quantity >0
+  
+  Duplicate Product
+  
+  Foreign Key
+  ```
+  
+  ---
+  
+  # Run All Tests
+  
+  ```bash
+  python manage.py test
+  ```
+  
+  or
+  
+  ```bash
+  pytest
+  ```
+  
+  ---
+  
+  # Run a Single Test File
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api
+  ```
+  
+  ---
+  
+  # Run a Single Test Class
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api.ProductAPITest
+  ```
+  
+  ---
+  
+  # Run a Single Test Method
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api.ProductAPITest.test_create_product
+  ```
+  
+  ---
+  
+  # Coverage Report
+  
+  Install:
+  
+  ```bash
+  pip install coverage
+  ```
+  
+  Run:
+  
+  ```bash
+  coverage run manage.py test
+  ```
+  
+  Generate a report:
+  
+  ```bash
+  coverage report
+  ```
+  
+  Or create an HTML report:
+  
+  ```bash
+  coverage html
+  ```
+  
+  Open:
+  
+  ```text
+  htmlcov/index.html
+  ```
+  
+  in your browser to see line-by-line coverage.
+  
+  ---
+  
+  ## What the interviewer will expect
+  
+  Aim to cover these scenarios:
+  
+  | Component | Tests |
+  |-----------|-------:|
+  | Product API | 5 |
+  | Box API | 5 |
+  | Order API | 5 |
+  | OrderItem API | 5 |
+  | Recommendation API | 8 |
+  | Recommendation Service | 10 |
+  | Models | 10 |
+  
+  This gives you **45–50 focused test cases**, which is an excellent level of coverage for a Django hiring assignment and thoroughly exercises both the CRUD APIs and the core box recommendation logic.
+  
+  >> USER: can we do the one tests folders with all the test separate files can test single folder or need to test the all files unders tests please explain me exact what should need to do
+  
+  >> ASSISTANT: Yes. In fact, **using a `tests/` folder with separate test files is the professional Django approach**. Django's test runner will automatically discover all test files inside the `tests` package as long as there is an `__init__.py` file.
+  
+  ## Recommended Structure
+  
+  ```text
+  shipping/
+  │
+  ├── models.py
+  ├── views.py
+  ├── serializers.py
+  ├── services/
+  │ └── recommendation.py
+  │
+  ├── tests/
+  │ ├── __init__.py
+  │ ├── test_models.py
+  │ ├── test_product_api.py
+  │ ├── test_box_api.py
+  │ ├── test_order_api.py
+  │ ├── test_order_item_api.py
+  │ ├── test_recommendation_api.py
+  │ └── test_recommendation_service.py
+  ```
+  
+  This is the structure I recommend for your assignment.
+  
+  ---
+  
+  # How Django Finds Tests
+  
+  When you run:
+  
+  ```bash
+  python manage.py test
+  ```
+  
+  Django automatically finds and runs:
+  
+  ```text
+  shipping/tests/test_models.py
+  shipping/tests/test_product_api.py
+  shipping/tests/test_box_api.py
+  shipping/tests/test_order_api.py
+  shipping/tests/test_order_item_api.py
+  shipping/tests/test_recommendation_api.py
+  shipping/tests/test_recommendation_service.py
+  ```
+  
+  You do **not** need to import one test file into another.
+  
+  ---
+  
+  # Run All Tests
+  
+  This is what you will usually do before submitting the assignment:
+  
+  ```bash
+  python manage.py test
+  ```
+  
+  Output example:
+  
+  ```text
+  Found 42 test(s).
+  
+  Creating test database...
+  
+  ..................................
+  
+  ----------------------------------------------------------------------
+  Ran 42 tests in 4.81s
+  
+  OK
+  ```
+  
+  ---
+  
+  # Run Only One Test File
+  
+  While developing, it's common to run only the tests for the code you're currently working on.
+  
+  Example: Product API tests
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api
+  ```
+  
+  Only this file runs.
+  
+  ---
+  
+  # Run Only Recommendation API Tests
+  
+  ```bash
+  python manage.py test shipping.tests.test_recommendation_api
+  ```
+  
+  ---
+  
+  # Run Only Service Tests
+  
+  ```bash
+  python manage.py test shipping.tests.test_recommendation_service
+  ```
+  
+  ---
+  
+  # Run One Test Class
+  
+  Suppose `test_product_api.py` contains:
+  
+  ```python
+  class ProductAPITest(TestCase):
+   ...
+  ```
+  
+  Run only that class:
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api.ProductAPITest
+  ```
+  
+  ---
+  
+  # Run One Test Method
+  
+  Suppose your class contains:
+  
+  ```python
+  def test_create_product(self):
+   ...
+  ```
+  
+  Run only that method:
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api.ProductAPITest.test_create_product
+  ```
+  
+  Only one test executes.
+  
+  ---
+  
+  # During Development
+  
+  A common workflow is:
+  
+  1. Build the Product API.
+  2. Run only the Product API tests:
+  
+  ```bash
+  python manage.py test shipping.tests.test_product_api
+  ```
+  
+  3. Fix any failures.
+  4. Move on to the Box API.
+  5. Run only the Box API tests:
+  
+  ```bash
+  python manage.py test shipping.tests.test_box_api
+  ```
+  
+  Repeat this for each component.
+  
+  ---
+  
+  # Before Submission
+  
+  Run the full test suite:
+  
+  ```bash
+  python manage.py test
+  ```
+  
+  Everything should pass.
+  
+  Example:
+  
+  ```text
+  Found 48 tests.
+  
+  ................................................
+  
+  Ran 48 tests in 5.12s
+  
+  OK
+  ```
+  
+  Copy this output into your `TEST_OUTPUT.md` if the assignment asks for terminal output.
+  
+  ---
+  
+  # Best Practice for Your Assignment
+  
+  I recommend organizing your tests like this:
+  
+  ```text
+  shipping/
+  │
+  ├── tests/
+  │ ├── __init__.py
+  │ ├── test_models.py # Model validations
+  │ ├── test_product_api.py # Product CRUD
+  │ ├── test_box_api.py # Box CRUD
+  │ ├── test_order_api.py # Order CRUD
+  │ ├── test_order_item_api.py # OrderItem CRUD
+  │ ├── test_recommendation_api.py # RecommendBoxAPIView
+  │ └── test_recommendation_service.py # BoxRecommendationService
+  ```
+  
+  This separation keeps each file focused on one area of the application, makes failures easier to diagnose, and is the structure many Django projects use. It also demonstrates good project organization in a hiring assignment.
+  
+  >> USER: i want to do the coverage to one sigle folder calld tests with inside all files can we do this
+  
+  >> ASSISTANT: Yes, **that's exactly how Django projects are commonly organized**, and it's a good approach.
+  
+  If your app looks like this:
+  
+  ```text
+  shipping/
+  │
+  ├── models.py
+  ├── views.py
+  ├── serializers.py
+  ├── services/
+  │ └── recommendation.py
+  │
+  ├── tests/
+  │ ├── __init__.py
+  │ ├── test_models.py
+  │ ├── test_product_api.py
+  │ ├── test_box_api.py
+  │ ├── test_order_api.py
+  │ ├── test_order_item_api.py
+  │ ├── test_recommendation_api.py
+  │ └── test_recommendation_service.py
+  ```
+  
+  then **all of your tests live inside one `tests` folder**, and Django/pytest will discover them automatically.
+  
+  ### Run all tests in the `tests` folder
+  
+  Using Django:
+  
+  ```bash
+  python manage.py test shipping.tests
+  ```
+  
+  or simply:
+  
+  ```bash
+  python manage.py test
+  ```
+  
+  Both will execute every test file inside `shipping/tests/`.
+  
+  ### Generate coverage for the entire project
+  
+  ```bash
+  coverage run manage.py test shipping.tests
+  coverage report
+  coverage html
+  ```
+  
+  This will:
+  
+  - Run every test in `shipping/tests/`
+  - Measure coverage for your project code (models, views, serializers, services, etc.)
+  - Create an HTML report in `htmlcov/`
+  
+  Open:
+  
+  ```text
+  htmlcov/index.html
+  ```
+  
+  to see detailed coverage.
+  
+  ---
+  
+  ## Recommended folder structure
+  
+  ```text
+  box_selector/
+  │
+  ├── shipping/
+  │ ├── models.py
+  │ ├── views.py
+  │ ├── serializers.py
+  │ ├── services/
+  │ │ └── recommendation.py
+  │ └── tests/
+  │ ├── __init__.py
+  │ ├── test_models.py
+  │ ├── test_product_api.py
+  │ ├── test_box_api.py
+  │ ├── test_order_api.py
+  │ ├── test_order_item_api.py
+  │ ├── test_recommendation_api.py
+  │ └── test_recommendation_service.py
+  │
+  ├── manage.py
+  └── htmlcov/
+  ```
+  
+  This is a clean, professional layout.
+  
+  ### If your goal is 90–100% coverage
+  
+  You should include tests for:
+  
+  - ✅ Models
+  - ✅ Serializers (optional but recommended)
+  - ✅ CRUD APIs (Product, Box, Order, OrderItem)
+  - ✅ Recommendation API
+  - ✅ Recommendation Service
+  - ✅ Validation and error cases (invalid input, missing data, oversized/heavy products, etc.)
+  
+  This approach will give you comprehensive coverage while keeping all your tests neatly organized under a single `tests` folder.
+  
+  >> USER: Recommendation Test Cases
+  
+  >> ASSISTANT: For your **Python/Django Hiring Assignment**, the **Recommendation API** is the core feature. It should have the most comprehensive tests because this is where the business logic lives.
+  
+  I recommend **15–20 test cases** covering success, failure, edge cases, and business rules.
+  
+  | Test Case | Scenario | Expected Result |
+  |-----------|----------|-----------------|
+  | **1** | Valid single product | Returns the correct box with HTTP 200 |
+  | **2** | Multiple products that fit | Returns the cheapest suitable box |
+  | **3** | Empty `items` list | HTTP 400 with "Order must contain at least one product." |
+  | **4** | Missing `items` field | HTTP 400 |
+  | **5** | Invalid product ID | HTTP 400 with product not found message |
+  | **6** | Quantity is 0 | HTTP 400 |
+  | **7** | Quantity is negative | HTTP 400 |
+  | **8** | Total weight exceeds every box's capacity | HTTP 400 with "No suitable box found." |
+  | **9** | Product dimensions exceed every box | HTTP 400 with "No suitable box found." |
+  | **10** | Product fits only after rotation | Correct box is selected (tests rotation logic) |
+  | **11** | Two boxes fit, different costs | Lower-cost box is selected |
+  | **12** | Two boxes have the same cost | Smaller-volume box is selected |
+  | **13** | Two boxes have the same cost and volume | Alphabetically first box is selected |
+  | **14** | Total weight equals box capacity exactly | Box is accepted |
+  | **15** | Product dimensions equal box dimensions exactly | Box is accepted |
+  | **16** | Decimal dimensions and weights | Recommendation succeeds correctly |
+  | **17** | Large quantity causes overweight | HTTP 400 |
+  | **18** | One product fits, another does not | HTTP 400 |
+  | **19** | Multiple boxes available | Best box selected according to all assignment rules |
+  | **20** | Successful response format | Response contains all expected fields (`success`, `recommended_box`, `cost`, etc.) |
+  
+  ---
+  
+  # Example Test Structure
+  
+  ```text
+  shipping/
+  └── tests/
+   ├── test_recommendation_api.py
+   └── test_recommendation_service.py
+  ```
+  
+  ## API Tests (`test_recommendation_api.py`)
+  
+  Focus on:
+  
+  - HTTP status codes
+  - Request validation
+  - Response JSON structure
+  - Integration between the API and the service
+  
+  Example test methods:
+  
+  ```python
+  test_recommend_single_product()
+  
+  test_recommend_multiple_products()
+  
+  test_empty_items()
+  
+  test_missing_items()
+  
+  test_invalid_product()
+  
+  test_zero_quantity()
+  
+  test_negative_quantity()
+  
+  test_no_suitable_box()
+  
+  test_product_rotation()
+  
+  test_equal_weight_capacity()
+  
+  test_equal_dimensions()
+  
+  test_response_structure()
+  ```
+  
+  ---
+  
+  ## Service Tests (`test_recommendation_service.py`)
+  
+  Focus on the recommendation algorithm itself.
+  
+  Example test methods:
+  
+  ```python
+  test_calculate_total_weight()
+  
+  test_find_suitable_boxes()
+  
+  test_filter_by_weight()
+  
+  test_filter_by_dimensions()
+  
+  test_rotation_logic()
+  
+  test_lowest_cost_rule()
+  
+  test_same_cost_smallest_volume_rule()
+  
+  test_same_cost_same_volume_alphabetical_rule()
+  
+  test_no_matching_box()
+  
+  test_successful_recommendation()
+  ```
+  
+  ---
+  
+  # Data Setup
+  
+  Use `setUp()` (or `setUpTestData()`) to create reusable fixtures.
+  
+  Example products:
+  
+  | Product | L | W | H | Weight |
+  |---------|--:|--:|--:|-------:|
+  | Laptop | 30 | 20 | 5 | 3 |
+  | Mouse | 10 | 5 | 4 | 1 |
+  | Keyboard | 45 | 15 | 5 | 2 |
+  
+  Example boxes:
+  
+  | Box | L | W | H | Max Weight | Cost |
+  |-----|--:|--:|--:|-----------:|----:|
+  | Small | 20 | 20 | 10 | 5 | 50 |
+  | Medium | 40 | 30 | 20 | 10 | 100 |
+  | Large | 60 | 40 | 30 | 20 | 150 |
+  
+  These fixtures allow you to cover nearly all of the scenarios above.
+  
+  ---
+  
+  # Coverage Target
+  
+  A strong target for this assignment is:
+  
+  | File | Approx. Tests |
+  |------|--------------:|
+  | `test_models.py` | 8–10 |
+  | `test_product_api.py` | 5–6 |
+  | `test_box_api.py` | 5–6 |
+  | `test_order_api.py` | 5–6 |
+  | `test_order_item_api.py` | 5–6 |
+  | `test_recommendation_api.py` | 12–15 |
+  | `test_recommendation_service.py` | 10–12 |
+  
+  This results in **50–60 well-focused tests**, which is an excellent level of coverage for a Django hiring assignment and demonstrates that you've tested both the CRUD functionality and the core recommendation algorithm thoroughly.
+  
+  >> USER: how to check Code Quality using the Run
+  
+  black
+  
+  flake8
+  
+  coverage
+  
+  >> ASSISTANT: For your Django hiring assignment, using **Black**, **Flake8**, and **Coverage** is a great way to demonstrate code quality. Here's how to set them up and run them.
+  
+  ---
+  
+  # 1. Install the tools
+  
+  ```bash
+  pip install black flake8 coverage
+  ```
+  
+  Verify they are installed:
+  
+  ```bash
+  black --version
+  flake8 --version
+  coverage --version
+  ```
+  
+  ---
+  
+  # 2. Black (Code Formatter)
+  
+  Black automatically formats your code according to a consistent style.
+  
+  ### Check which files would be reformatted (without changing them)
+  
+  ```bash
+  black --check .
+  ```
+  
+  Example output if everything is formatted:
+  
+  ```text
+  All done! ✨ 🍰 ✨
+  35 files would be left unchanged.
+  ```
+  
+  Example output if formatting is needed:
+  
+  ```text
+  would reformat shipping/views.py
+  would reformat shipping/services/recommendation.py
+  
+  Oh no! 💥 💔 💥
+  2 files would be reformatted.
+  ```
+  
+  ### Format the project
+  
+  ```bash
+  black .
+  ```
+  
+  Example output:
+  
+  ```text
+  reformatted shipping/views.py
+  reformatted shipping/services/recommendation.py
+  
+  All done! ✨ 🍰 ✨
+  ```
+  
+  ---
+  
+  # 3. Flake8 (Linting)
+  
+  Flake8 checks for style issues, unused imports, long lines, etc.
+  
+  Run:
+  
+  ```bash
+  flake8 .
+  ```
+  
+  Example output:
+  
+  ```text
+  shipping/views.py:15:1: F401 'datetime' imported but unused
+  shipping/services/recommendation.py:42:80: E501 line too long (92 > 79 characters)
+  ```
+  
+  If nothing is printed, it means there are no linting errors.
+  
+  ---
+  
+  ## Optional: Create a `.flake8` configuration
+  
+  Create a file named `.flake8` in the project root:
+  
+  ```ini
+  [flake8]
+  max-line-length = 88
+  exclude =
+   migrations,
+   venv,
+   __pycache__,
+   .git,
+   env
+  ```
+  
+  Using a `max-line-length` of **88** matches Black's default formatting.
+  
+  ---
+  
+  # 4. Coverage (Test Coverage)
+  
+  Run your tests while collecting coverage:
+  
+  ```bash
+  coverage run manage.py test
+  ```
+  
+  Generate a terminal report:
+  
+  ```bash
+  coverage report
+  ```
+  
+  Example:
+  
+  ```text
+  Name Stmts Miss Cover
+  ----------------------------------------------------------
+  shipping/models.py 55 2 96%
+  shipping/views.py 70 0 100%
+  shipping/services/recommendation.py 90 3 97%
+  shipping/serializers.py 35 0 100%
+  ----------------------------------------------------------
+  TOTAL 250 5 98%
+  ```
+  
+  Generate an HTML report:
+  
+  ```bash
+  coverage html
+  ```
+  
+  This creates:
+  
+  ```text
+  htmlcov/
+   index.html
+  ```
+  
+  Open:
+  
+  ```text
+  htmlcov/index.html
+  ```
+  
+  in your browser to see line-by-line coverage.
+  
+  ---
+  
+  # 5. Recommended `pyproject.toml` (for Black)
+  
+  ```toml
+  [tool.black]
+  line-length = 88
+  target-version = ["py311"]
+  exclude = '''
+  /(
+   migrations
+   | venv
+   | env
+  )/
+  '''
+  ```
+  
+  ---
+  
+  # 6. Recommended Workflow Before Submission
+  
+  Run these commands in order:
+  
+  ```bash
+  # Format the code
+  black .
+  
+  # Check for linting issues
+  flake8 .
+  
+  # Run all tests
+  python manage.py test
+  
+  # Generate coverage
+  coverage run manage.py test
+  coverage report
+  coverage html
+  ```
+  
+  ---
+  
+  # 7. Typical Submission Evidence
+  
+  Include screenshots or terminal output showing:
+  
+  - ✅ `black .` completed successfully.
+  - ✅ `flake8 .` with no errors.
+  - ✅ `python manage.py test` showing all tests passed.
+  - ✅ `coverage report` showing high coverage (aim for **90%+** if practical).
+  
+  ---
+  
+  ## Example Terminal Session
+  
+  ```bash
+  $ black .
+  All done! ✨ 🍰 ✨
+  42 files left unchanged.
+  
+  $ flake8 .
+  # No output (success)
+  
+  $ python manage.py test
+  Found 48 test(s).
+  ................................................
+  ----------------------------------------------------------------------
+  Ran 48 tests in 4.52s
+  
+  OK
+  
+  $ coverage run manage.py test
+  Found 48 test(s).
+  ................................................
+  OK
+  
+  $ coverage report
+  Name Stmts Miss Cover
+  ----------------------------------------------------------
+  shipping/models.py 55 1 98%
+  shipping/views.py 70 0 100%
+  shipping/serializers.py 35 0 100%
+  shipping/services/recommendation.py 90 2 98%
+  ----------------------------------------------------------
+  TOTAL 250 3 99%
+  ```
+  
+  This workflow is commonly used in Django projects and provides clear evidence that your code is formatted, linted, tested, and well covered.
+  
+  >> USER: API Documentation
+  
+  >> ASSISTANT: For your hiring assignment, the API documentation should be **clear, concise, and professional**. Since the assignment doesn't explicitly require Swagger/OpenAPI, a well-written `API_DOCUMENTATION.md` (or a section in `README.md`) is usually sufficient. If you want to go further, you can also add Swagger using `drf-spectacular` or `drf-yasg`.
+  
+  ---
+  
+  # API_DOCUMENTATION.md
+  
+  ````markdown
+  # AI-Assisted Box Selection System - API Documentation
+  
+  ## Base URL
+  
+  ```
+  http://127.0.0.1:8000/api/
+  ```
+  
+  ---
+  
+  # Products API
+  
+  ## List Products
+  
+  **GET**
+  
+  ```
+  /products/
+  ```
+  
+  ### Response
+  
+  ```json
+  [
+   {
+   "id": 1,
+   "name": "Laptop",
+   "length": "30.00",
+   "width": "20.00",
+   "height": "5.00",
+   "weight": "3.00"
+   }
+  ]
+  ```
+  
+  ---
+  
+  ## Create Product
+  
+  **POST**
+  
+  ```
+  /products/
+  ```
+  
+  ### Request
+  
+  ```json
+  {
+   "name": "Laptop",
+   "length": 30,
+   "width": 20,
+   "height": 5,
+   "weight": 3
+  }
+  ```
+  
+  ### Response
+  
+  ```json
+  {
+   "id": 1,
+   "name": "Laptop",
+   "length": "30.00",
+   "width": "20.00",
+   "height": "5.00",
+   "weight": "3.00"
+  }
+  ```
+  
+  ---
+  
+  ## Retrieve Product
+  
+  **GET**
+  
+  ```
+  /products/{id}/
+  ```
+  
+  ---
+  
+  ## Update Product
+  
+  **PUT**
+  
+  ```
+  /products/{id}/
+  ```
+  
+  ---
+  
+  ## Delete Product
+  
+  **DELETE**
+  
+  ```
+  /products/{id}/
+  ```
+  
+  Returns:
+  
+  ```
+  204 No Content
+  ```
+  
+  ---
+  
+  # Boxes API
+  
+  ## List Boxes
+  
+  **GET**
+  
+  ```
+  /boxes/
+  ```
+  
+  ---
+  
+  ## Create Box
+  
+  **POST**
+  
+  ```
+  /boxes/
+  ```
+  
+  ### Request
+  
+  ```json
+  {
+   "name": "Medium Box",
+   "internal_length": 40,
+   "internal_width": 30,
+   "internal_height": 20,
+   "max_weight": 10,
+   "cost": 100
+  }
+  ```
+  
+  ---
+  
+  ## Retrieve Box
+  
+  **GET**
+  
+  ```
+  /boxes/{id}/
+  ```
+  
+  ---
+  
+  ## Update Box
+  
+  **PUT**
+  
+  ```
+  /boxes/{id}/
+  ```
+  
+  ---
+  
+  ## Delete Box
+  
+  **DELETE**
+  
+  ```
+  /boxes/{id}/
+  ```
+  
+  ---
+  
+  # Orders API
+  
+  ## List Orders
+  
+  **GET**
+  
+  ```
+  /orders/
+  ```
+  
+  ---
+  
+  ## Create Order
+  
+  **POST**
+  
+  ```
+  /orders/
+  ```
+  
+  ### Request
+  
+  ```json
+  {
+   "status": "Pending"
+  }
+  ```
+  
+  ---
+  
+  ## Retrieve Order
+  
+  **GET**
+  
+  ```
+  /orders/{id}/
+  ```
+  
+  ---
+  
+  ## Update Order
+  
+  **PUT**
+  
+  ```
+  /orders/{id}/
+  ```
+  
+  ---
+  
+  ## Delete Order
+  
+  **DELETE**
+  
+  ```
+  /orders/{id}/
+  ```
+  
+  ---
+  
+  # Order Items API
+  
+  ## List Order Items
+  
+  **GET**
+  
+  ```
+  /order-items/
+  ```
+  
+  ---
+  
+  ## Create Order Item
+  
+  **POST**
+  
+  ```
+  /order-items/
+  ```
+  
+  ### Request
+  
+  ```json
+  {
+   "order": 1,
+   "product": 1,
+   "quantity": 2
+  }
+  ```
+  
+  ---
+  
+  ## Retrieve Order Item
+  
+  **GET**
+  
+  ```
+  /order-items/{id}/
+  ```
+  
+  ---
+  
+  ## Update Order Item
+  
+  **PUT**
+  
+  ```
+  /order-items/{id}/
+  ```
+  
+  ---
+  
+  ## Delete Order Item
+  
+  **DELETE**
+  
+  ```
+  /order-items/{id}/
+  ```
+  
+  ---
+  
+  # Box Recommendation API
+  
+  ## Recommend Best Box
+  
+  **POST**
+  
+  ```
+  /recommend-box/
+  ```
+  
+  ### Request
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 2,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  ### Success Response
+  
+  ```json
+  {
+   "success": true,
+   "recommended_box": {
+   "id": 2,
+   "name": "Medium Box",
+   "cost": "100.00",
+   "volume": "24000.00",
+   "max_weight": "10.00"
+   },
+   "total_weight": "7.00",
+   "message": "Box recommended successfully."
+  }
+  ```
+  
+  ---
+  
+  ### Error Response
+  
+  ```json
+  {
+   "success": false,
+   "message": "No suitable box found."
+  }
+  ```
+  
+  ---
+  
+  # HTTP Status Codes
+  
+  | Status Code | Description |
+  |-------------|-------------|
+  | 200 | Success |
+  | 201 | Resource Created |
+  | 204 | Resource Deleted |
+  | 400 | Validation Error / Bad Request |
+  | 404 | Resource Not Found |
+  | 500 | Internal Server Error |
+  
+  ---
+  
+  # Recommendation Rules
+  
+  The recommendation algorithm follows these rules:
+  
+  1. Every product must fit inside the box.
+  2. Product rotation is supported.
+  3. Total order weight must not exceed the box's maximum weight.
+  4. Among all suitable boxes, choose:
+   - Lowest cost
+   - If costs are equal, smallest volume
+   - If cost and volume are equal, alphabetical box name
+  5. If no suitable box exists, return an error response.
+  ````
+  
+  ---
+  
+  # If You Want Extra Credit
+  
+  Many interviewers appreciate interactive API documentation. You can add Swagger UI.
+  
+  Install:
+  
+  ```bash
+  pip install drf-spectacular
+  ```
+  
+  Update `settings.py`:
+  
+  ```python
+  INSTALLED_APPS += [
+   "drf_spectacular",
+  ]
+  
+  REST_FRAMEWORK = {
+   "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+  }
+  ```
+  
+  Update `urls.py`:
+  
+  ```python
+  from drf_spectacular.views import (
+   SpectacularAPIView,
+   SpectacularSwaggerView,
+  )
+  
+  urlpatterns = [
+   path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+   path(
+   "api/docs/",
+   SpectacularSwaggerView.as_view(url_name="schema"),
+   name="swagger-ui",
+   ),
+  ]
+  ```
+  
+  Then visit:
+  
+  ```
+  http://127.0.0.1:8000/api/docs/
+  ```
+  
+  This provides an interactive interface where reviewers can explore your endpoints, submit requests, and inspect responses.
+  
+  ## Recommendation
+  
+  For a hiring assignment, include **both**:
+  
+  - **`API_DOCUMENTATION.md`** with endpoint details, request/response examples, and business rules.
+  - **Swagger/OpenAPI (`/api/docs/`)** for interactive exploration.
+  
+  Providing both makes your project easier to review and demonstrates familiarity with common Django REST Framework documentation practices.
+  
+  >> USER: AI_USAGE.md
+  
+  >> ASSISTANT: Below is a professional **`AI_USAGE.md`** that is appropriate for a hiring assignment. It is transparent about AI assistance while making it clear that you were responsible for the implementation, testing, and validation.
+  
+  ````markdown
+  # AI Usage Report
+  
+  ## Project
+  
+  **AI-Assisted Box Selection System**
+  
+  ---
+  
+  ## Purpose
+  
+  AI tools were used as a development assistant to improve productivity, understand best practices, and assist with code organization. All generated code was reviewed, modified where necessary, integrated into the project, and tested before submission.
+  
+  ---
+  
+  ## AI Tool Used
+  
+  - ChatGPT (OpenAI)
+  
+  ---
+  
+  ## Areas Where AI Was Used
+  
+  ### 1. Project Planning
+  
+  AI was used to:
+  
+  - Break down the assignment into manageable tasks.
+  - Suggest a clean Django project structure.
+  - Recommend a layered architecture (Models → Serializers → Services → Views → URLs → Tests).
+  
+  ---
+  
+  ### 2. Database Design
+  
+  AI assisted in designing the database models for:
+  
+  - Product
+  - Box
+  - Order
+  - OrderItem
+  
+  The generated model suggestions were reviewed and adapted to meet the assignment requirements.
+  
+  ---
+  
+  ### 3. Django REST Framework APIs
+  
+  AI helped generate the initial structure for:
+  
+  - CRUD APIs
+  - Class-Based Views
+  - URL routing
+  - Serializers
+  
+  The implementation was manually verified and integrated into the project.
+  
+  ---
+  
+  ### 4. Recommendation Algorithm
+  
+  AI assisted in designing the box recommendation logic based on the assignment rules:
+  
+  - Product dimension validation
+  - Weight validation
+  - Product rotation
+  - Lowest cost selection
+  - Smallest volume tie-breaker
+  - Alphabetical name tie-breaker
+  
+  The algorithm was manually reviewed, tested, and refined.
+  
+  ---
+  
+  ### 5. Code Refactoring
+  
+  AI provided suggestions for improving:
+  
+  - Code readability
+  - Method extraction
+  - Separation of concerns
+  - Service layer implementation
+  - Naming conventions
+  
+  ---
+  
+  ### 6. Unit Testing
+  
+  AI was used to generate ideas for:
+  
+  - API test cases
+  - Service layer tests
+  - Edge case testing
+  - Validation scenarios
+  
+  All tests were executed locally before submission.
+  
+  ---
+  
+  ### 7. Documentation
+  
+  AI assisted in drafting:
+  
+  - README.md
+  - API_DOCUMENTATION.md
+  - AI_USAGE.md
+  
+  The final documentation was edited and verified manually.
+  
+  ---
+  
+  ## Manual Work Performed
+  
+  The following tasks were completed manually:
+  
+  - Project setup
+  - Django configuration
+  - Database migrations
+  - Code integration
+  - Debugging
+  - API testing
+  - Unit testing
+  - Validation of recommendation logic
+  - Running Black
+  - Running Flake8
+  - Running Coverage
+  - Git version control
+  - Final verification
+  
+  ---
+  
+  ## Verification
+  
+  Every AI-generated suggestion was:
+  
+  - Reviewed before use
+  - Modified where necessary
+  - Executed locally
+  - Tested using Django's test framework
+  - Verified against the assignment requirements
+  
+  No code was copied directly into the final submission without review and testing.
+  
+  ---
+  
+  ## Summary
+  
+  AI was used as a development assistant to improve productivity and code quality. Final implementation decisions, testing, debugging, and verification were performed manually to ensure the application satisfies the assignment requirements.
+  ````
+  
+  ## This looks professional because it:
+  
+  - Doesn't overstate or hide AI usage.
+  - Explains **where** AI helped.
+  - Emphasizes that you reviewed, integrated, and tested the code yourself.
+  - Matches what many companies expect when they ask for an `AI_USAGE.md` file.
+
+  --- Alternative branch: USER: API Design design apis for Product APIs, Box APIs, Order APIs, Recommendation API ---
+
+  >> USER: API Design design apis for Product APIs, Box APIs, Order APIs, Recommendation API
+  
+  >> ASSISTANT: For this assignment, I recommend following **RESTful API conventions**. This makes your project easier to understand, test, and extend. Since the core of the assignment is the **box recommendation**, all CRUD APIs should be straightforward, while the recommendation endpoint should be a custom action.
+  
+  ---
+  
+  # API Overview
+  
+  | Module | Endpoint | Method | Purpose |
+  |---------|----------|--------|---------|
+  | Products | `/api/products/` | GET | List all products |
+  | Products | `/api/products/` | POST | Create a product |
+  | Products | `/api/products/{id}/` | GET | Retrieve a product |
+  | Products | `/api/products/{id}/` | PUT | Update a product |
+  | Products | `/api/products/{id}/` | PATCH | Partially update a product |
+  | Products | `/api/products/{id}/` | DELETE | Delete a product |
+  | Boxes | `/api/boxes/` | GET | List all boxes |
+  | Boxes | `/api/boxes/` | POST | Create a box |
+  | Boxes | `/api/boxes/{id}/` | GET | Retrieve a box |
+  | Boxes | `/api/boxes/{id}/` | PUT | Update a box |
+  | Boxes | `/api/boxes/{id}/` | PATCH | Partially update a box |
+  | Boxes | `/api/boxes/{id}/` | DELETE | Delete a box |
+  | Orders | `/api/orders/` | GET | List orders |
+  | Orders | `/api/orders/` | POST | Create an order |
+  | Orders | `/api/orders/{id}/` | GET | View order details |
+  | Recommendation | `/api/recommend-box/` | POST | Recommend the best box |
+  
+  ---
+  
+  # 1. Product APIs
+  
+  ## GET `/api/products/`
+  
+  Returns all products.
+  
+  ### Response
+  
+  ```json
+  [
+   {
+   "id": 1,
+   "name": "Laptop",
+   "length": 30,
+   "width": 20,
+   "height": 2,
+   "weight": 2.5
+   },
+   {
+   "id": 2,
+   "name": "Keyboard",
+   "length": 45,
+   "width": 15,
+   "height": 4,
+   "weight
+  
+  >> USER: Integration Tests for all the apis
+  
+  >> ASSISTANT: For this assignment, **integration tests** should verify that the complete API flow works—from receiving an HTTP request, validating input, interacting with the database, invoking business logic, and returning the expected response. Use Django REST Framework's `APITestCase`.
+  
+  A recommended file structure is:
+  
+  ```text
+  shipping/
+  └── tests/
+   ├── test_products_api.py
+   ├── test_boxes_api.py
+   ├── test_orders_api.py
+   ├── test_recommendation_api.py
+   └── test_integration_flow.py
+  ```
+  
+  ---
+  
+  # 1. Product API Integration Tests
+  
+  ## Test Cases
+  
+  | Test | Expected Result |
+  |-------|-----------------|
+  | Create Product | 201 Created |
+  | Get Product List | 200 OK |
+  | Get Product Detail | 200 OK |
+  | Update Product | 200 OK |
+  | Delete Product | 204 No Content |
+  | Invalid Product | 400 Bad Request |
+  
+  ---
+  
+  ### Create Product
+  
+  ```
+  POST /api/products/
+  ```
+  
+  Request
+  
+  ```json
+  {
+   "name": "Laptop",
+   "length": 30,
+   "width": 20,
+   "height": 2,
+   "weight": 2.5
+  }
+  ```
+  
+  Assertions
+  
+  - Status = 201
+  - Product exists in database
+  - Response contains product ID
+  
+  ---
+  
+  ### List Products
+  
+  ```
+  GET /api/products/
+  ```
+  
+  Assertions
+  
+  - Status = 200
+  - Returns all products
+  
+  ---
+  
+  ### Retrieve Product
+  
+  ```
+  GET /api/products/1/
+  ```
+  
+  Assertions
+  
+  - Status = 200
+  - Correct product returned
+  
+  ---
+  
+  ### Update Product
+  
+  ```
+  PUT /api/products/1/
+  ```
+  
+  Assertions
+  
+  - Status = 200
+  - Database updated
+  
+  ---
+  
+  ### Delete Product
+  
+  ```
+  DELETE /api/products/1/
+  ```
+  
+  Assertions
+  
+  - Status = 204
+  - Product removed from database
+  
+  ---
+  
+  ### Invalid Product
+  
+  ```
+  POST /api/products/
+  ```
+  
+  ```json
+  {
+   "name": "",
+   "length": -5,
+   "width": 10,
+   "height": 2,
+   "weight": 1
+  }
+  ```
+  
+  Assertions
+  
+  - Status = 400
+  - Validation errors returned
+  
+  ---
+  
+  # 2. Box API Integration Tests
+  
+  ## Test Cases
+  
+  | Test | Expected |
+  |-------|----------|
+  | Create Box | 201 |
+  | List Boxes | 200 |
+  | Retrieve Box | 200 |
+  | Update Box | 200 |
+  | Delete Box | 204 |
+  | Invalid Box | 400 |
+  
+  ---
+  
+  ### Create Box
+  
+  ```json
+  {
+   "name": "Small Box",
+   "internal_length": 35,
+   "internal_width": 25,
+   "internal_height": 10,
+   "max_weight": 5,
+   "cost": 50
+  }
+  ```
+  
+  Assertions
+  
+  - Box saved
+  - Status 201
+  
+  ---
+  
+  ### Invalid Box
+  
+  ```json
+  {
+   "name": "",
+   "internal_length": -1,
+   "internal_width": 20,
+   "internal_height": 10,
+   "max_weight": -2,
+   "cost": -50
+  }
+  ```
+  
+  Assertions
+  
+  - Status 400
+  - Validation messages returned
+  
+  ---
+  
+  # 3. Order API Integration Tests
+  
+  ## Test Cases
+  
+  | Test | Expected |
+  |-------|----------|
+  | Create Order | 201 |
+  | View Order | 200 |
+  | List Orders | 200 |
+  | Invalid Quantity | 400 |
+  | Invalid Product ID | 400 |
+  
+  ---
+  
+  ### Create Order
+  
+  Request
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 2
+   },
+   {
+   "product": 2,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  Assertions
+  
+  - Order created
+  - Two OrderItems created
+  - Status 201
+  
+  ---
+  
+  ### Invalid Quantity
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 0
+   }
+   ]
+  }
+  ```
+  
+  Assertions
+  
+  - Status 400
+  - Validation error
+  
+  ---
+  
+  ### Invalid Product
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 999,
+   "quantity": 2
+   }
+   ]
+  }
+  ```
+  
+  Assertions
+  
+  - Status 400
+  - Product not found
+  
+  ---
+  
+  # 4. Recommendation API Integration Tests
+  
+  ## Test Cases
+  
+  | Test | Expected |
+  |-------|----------|
+  | Single Product | Correct Box |
+  | Multiple Products | Correct Box |
+  | Lowest Cost Selected | Pass |
+  | Smallest Volume Selected | Pass |
+  | Alphabetical Tie Break | Pass |
+  | No Suitable Box | 404 or 200 with message |
+  | Empty Order | 400 |
+  | Too Heavy | No Box |
+  | Product Too Large | No Box |
+  
+  ---
+  
+  ## Test 1
+  
+  ```
+  POST /api/recommend-box/
+  ```
+  
+  ```json
+  {
+   "items": [
+   {
+   "product": 1,
+   "quantity": 1
+   }
+   ]
+  }
+  ```
+  
+  Assertions
+  
+  - Status 200
+  - Recommended box is Small Box
+  
+  ---
+  
+  ## Test 2
+  
+  Two products
+  
+  Assertions
+  
+  - Correct total weight calculated
+  - Correct box returned
+  
+  ---
+  
+  ## Test 3
+  
+  Two boxes
+  
+  ```
+  Cost = 100
+  ```
+  
+  Both fit.
+  
+  Expected
+  
+  Cheapest selected.
+  
+  ---
+  
+  ## Test 4
+  
+  Same cost
+  
+  Different volume
+  
+  Expected
+  
+  Smaller volume selected.
+  
+  ---
+  
+  ## Test 5
+  
+  Same cost
+  
+  Same volume
+  
+  Names
+  
+  ```
+  Alpha Box
+  
+  Beta Box
+  ```
+  
+  Expected
+  
+  Alpha Box
+  
+  ---
+  
+  ## Test 6
+  
+  No suitable box
+  
+  ```json
+  {
+   "message": "No suitable box found."
+  }
+  ```
+  
+  Assertions
+  
+  - Correct response message
+  - Appropriate status code based on your API design
+  
+  ---
+  
+  # 5. End-to-End Integration Test (Most Important)
+  
+  This test verifies the complete workflow.
+  
+  ### Step 1
+  
+  Create Product
+  
+  ```
+  POST /products/
+  ```
+  
+  ↓
+  
+  ### Step 2
+  
+  Create Box
+  
+  ```
+  POST /boxes/
+  ```
+  
+  ↓
+  
+  ### Step 3
+  
+  Create another Box
+  
+  ↓
+  
+  ### Step 4
+  
+  Create Order
+  
+  ↓
+  
+  ### Step 5
+  
+  Call
+  
+  ```
+  POST /recommend-box/
+  ```
+  
+  ↓
+  
+  ### Step 6
+  
+  Verify
+  
+  - Order exists
+  - OrderItems exist
+  - Recommended box saved
+  - API response correct
+  
+  This tests the entire application, not just individual endpoints.
+  
+  ---
+  
+  # 6. Error Scenario Integration Tests
+  
+  | Scenario | Expected |
+  |----------|----------|
+  | Negative dimensions | 400 |
+  | Zero weight | 400 |
+  | Duplicate product name | 400 |
+  | Duplicate box name | 400 |
+  | Quantity = 0 | 400 |
+  | Product does not exist | 400 |
+  | Box does not exist | Recommendation fails gracefully |
+  | Empty request body | 400 |
+  | Invalid JSON | 400 |
+  
+  ---
+  
+  # 7. API Status Code Verification
+  
+  | API | Success | Validation Error |
+  |------|---------|------------------|
+  | Create Product | 201 | 400 |
+  | List Products | 200 | — |
+  | Retrieve Product | 200 | 404 |
+  | Update Product | 200 | 400 |
+  | Delete Product | 204 | 404 |
+  | Create Box | 201 | 400 |
+  | Create Order | 201 | 400 |
+  | Recommend Box | 200 | 400 (invalid request) / 200 or 404 (no suitable box, depending on your design) |
+  
+  ---
+  
+  # 8. Recommended Coverage Goal
+  
+  To make your submission stand out, aim for:
+  
+  - **Model tests:** 10–15
+  - **Serializer tests:** 8–10
+  - **Service (recommendation algorithm) tests:** 15–20
+  - **API integration tests:** 20–25
+  - **End-to-end workflow tests:** 2–3
+  
+  This gives you around **60–70 well-focused tests**, which is excellent coverage for a hiring assignment and demonstrates both correctness and maintainability.
+
