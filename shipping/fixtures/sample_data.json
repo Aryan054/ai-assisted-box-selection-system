@@ -1,0 +1,145 @@
+[
+    {
+        "model": "shipping.product",
+        "pk": 1,
+        "fields": {
+            "name": "Wireless Mouse",
+            "length": "12.00",
+            "width": "7.00",
+            "height": "4.00",
+            "weight": "0.20",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 2,
+        "fields": {
+            "name": "Mechanical Keyboard",
+            "length": "45.00",
+            "width": "16.00",
+            "height": "5.00",
+            "weight": "1.10",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 3,
+        "fields": {
+            "name": "Laptop 15 Inch",
+            "length": "36.00",
+            "width": "25.00",
+            "height": "3.00",
+            "weight": "2.20",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 4,
+        "fields": {
+            "name": "Bluetooth Speaker",
+            "length": "20.00",
+            "width": "10.00",
+            "height": "10.00",
+            "weight": "0.80",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 5,
+        "fields": {
+            "name": "Coffee Mug",
+            "length": "10.00",
+            "width": "10.00",
+            "height": "12.00",
+            "weight": "0.35",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 6,
+        "fields": {
+            "name": "Gaming Monitor 24 Inch",
+            "length": "56.00",
+            "width": "18.00",
+            "height": "42.00",
+            "weight": "4.80",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.product",
+        "pk": 7,
+        "fields": {
+            "name": "External Hard Drive",
+            "length": "13.00",
+            "width": "8.00",
+            "height": "2.00",
+            "weight": "0.25",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.box",
+        "pk": 1,
+        "fields": {
+            "name": "Small Box",
+            "length": "20.00",
+            "width": "20.00",
+            "height": "10.00",
+            "max_weight": "2.00",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.box",
+        "pk": 2,
+        "fields": {
+            "name": "Medium Box",
+            "length": "40.00",
+            "width": "30.00",
+            "height": "20.00",
+            "max_weight": "8.00",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.box",
+        "pk": 3,
+        "fields": {
+            "name": "Large Box",
+            "length": "60.00",
+            "width": "45.00",
+            "height": "45.00",
+            "max_weight": "20.00",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "shipping.box",
+        "pk": 4,
+        "fields": {
+            "name": "Extra Large Box",
+            "length": "80.00",
+            "width": "60.00",
+            "height": "60.00",
+            "max_weight": "35.00",
+            "created_at": "2026-01-01T10:00:00Z",
+            "updated_at": "2026-01-01T10:00:00Z"
+        }
+    }
+]
